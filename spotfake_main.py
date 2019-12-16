@@ -11,7 +11,8 @@ from transformers import AdamW
 from data_utils.MultiModalDataset import MultiModalDataset
 from model.SpotFake import SpotFake
 from trainer import Train
-
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 # log format
 C_LogFormat = '%(asctime)s - %(levelname)s - %(message)s'
 # setting log format
@@ -23,7 +24,7 @@ logging.basicConfig(level=logging.INFO, format=C_LogFormat)
 
 BERT_PATH = '/home/tanghengzhu/yjs/model/bert-base-uncased_L-24_H-1024_A-16'
 
-BATCH_SIZE_PER_GPU = 10
+BATCH_SIZE_PER_GPU = 12
 GPU_COUNT = torch.cuda.device_count()
 
 
@@ -64,8 +65,7 @@ if __name__ == '__main__':
                  f"test data all steps : {len(test_loader)}")
 
     model = DataParallel(SpotFake(num_class=2,
-                                  bert_path=BERT_PATH,
-                                  vgg_path='/home/tanghengzhu/yjs/model/vgg19_bn-c79401a0.pth'))
+                                  bert_path=BERT_PATH))
 
     model = model.cuda()
 
@@ -96,7 +96,7 @@ if __name__ == '__main__':
                     metric=accuracy_score,
                     num_class=2,
                     scheduler=scheduler,
-                    model_checkpoint='./save_model/spotfake/spot-fake-0.pt')
+                    model_checkpoint=None)
 
     trainer.train()
     print(f"Testing result :{trainer.test()}")

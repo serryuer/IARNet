@@ -36,7 +36,7 @@ def load_vgg_from_file(vgg_Path):
 
 
 class SpotFake(nn.Module):
-    def __init__(self, num_class, bert_path, vgg_path):
+    def __init__(self, num_class, bert_path):
         super(SpotFake, self).__init__()
         self.num_class = num_class
         self.bert = BertModel.from_pretrained(bert_path)

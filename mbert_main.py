@@ -13,6 +13,9 @@ from model.MulimodalBert import MultimodalBertForClassification
 from model.SpotFake import SpotFake
 from trainer import Train
 
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
 # log format
 C_LogFormat = '%(asctime)s - %(levelname)s - %(message)s'
 # setting log format
@@ -22,9 +25,9 @@ logging.basicConfig(level=logging.INFO, format=C_LogFormat)
 # os.environ['CUDA_VISIBLE_DEVICES'] = '4,5,6'
 # os.environ['CUDA_VISIBLE_DEVICES'] = '1,2,3,4,5,6,7'
 
-BERT_PATH = '/sdd/yujunshuai/model/bert-base-uncased_L-24_H-1024_A-16'
+BERT_PATH = '/home/tanghengzhu/yjs/model/bert-base-uncased_L-24_H-1024_A-16'
 
-BATCH_SIZE_PER_GPU = 20
+BATCH_SIZE_PER_GPU = 24
 GPU_COUNT = torch.cuda.device_count()
 
 
@@ -38,19 +41,19 @@ def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_st
 
 
 if __name__ == '__main__':
-    train_dataset = MultiModalDataset(text_root='/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/',
-                                      img_root='/sdd/yujunshuai/data/Fakeddit/images/train_image',
+    train_dataset = MultiModalDataset(text_root='/home/tanghengzhu/yjs/data/Fakeddit/fakeddit_v1.0/',
+                                      img_root='/home/tanghengzhu/yjs/data/Fakeddit/images/train_image',
                                       bert_path=BERT_PATH,
                                       max_sequence_length=256,
                                       num_class=2)
-    test_dataset = MultiModalDataset(text_root='/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/',
-                                     img_root='/sdd/yujunshuai/data/Fakeddit/images/test_image',
+    test_dataset = MultiModalDataset(text_root='/home/tanghengzhu/yjs/data/Fakeddit/fakeddit_v1.0/',
+                                     img_root='/home/tanghengzhu/yjs/data/Fakeddit/images/test_image',
                                      bert_path=BERT_PATH,
                                      max_sequence_length=256,
                                      num_class=2,
                                      isTest=True)
-    val_dataset = MultiModalDataset(text_root='/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/',
-                                    img_root='/sdd/yujunshuai/data/Fakeddit/images/validate_image',
+    val_dataset = MultiModalDataset(text_root='/home/tanghengzhu/yjs/data/Fakeddit/fakeddit_v1.0/',
+                                    img_root='/home/tanghengzhu/yjs/data/Fakeddit/images/validate_image',
                                     bert_path=BERT_PATH,
                                     max_sequence_length=256,
                                     num_class=2,
@@ -91,7 +94,7 @@ if __name__ == '__main__':
                     epochs=10,
                     print_step=100,
                     early_stop_patience=3,
-                    save_model_path='/sdd/yujunshuai/save_model',
+                    save_model_path='./save_model/mbert',
                     save_model_every_epoch=True,
                     metric=accuracy_score,
                     num_class=2,

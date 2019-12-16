@@ -10,6 +10,7 @@ from transformers import AdamW
 from model.PureBert import PureBert
 from data_utils.FakedditDataset import FakedditDataset
 from trainer import Train
+from model.util import load_parallel_save_model
 
 from sklearn.metrics import *
 
@@ -24,7 +25,8 @@ logging.basicConfig(level=logging.INFO, format=C_LogFormat)
 # os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2,3'
 # os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2,3,4,5,6,7'
 
-BERT_PATH = '/home/yujunshuai/model/bert-base-uncased_L-24_H-1024_A-16'
+BERT_PATH = '/sdd/yujunshuai/model/bert-base-uncased_L-24_H-1024_A-16'
+CHECK_POINT = '/sdd/yujunshuai/save_model/pure_bert/pure-bert-best-validate-model.pt'
 
 BATCH_SIZE_PER_GPU = 10
 GPU_COUNT = torch.cuda.device_count()
@@ -40,17 +42,17 @@ def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_st
 
 
 if __name__ == '__main__':
-    train_dataset = FakedditDataset('/home/yujunshuai/data/Fakeddit/fakeddit_v1.0/',
+    train_dataset = FakedditDataset('/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/',
                                     bert_path=BERT_PATH,
-                                    max_sequence_length=150,
+                                    max_sequence_length=256,
                                     num_class=2)
-    test_dataset = FakedditDataset('/home/yujunshuai/data/Fakeddit/fakeddit_v1.0/', isTest=True,
+    test_dataset = FakedditDataset('/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/', isTest=True,
                                    bert_path=BERT_PATH,
-                                   max_sequence_length=150,
+                                   max_sequence_length=256,
                                    num_class=2)
-    val_dataset = FakedditDataset('/home/yujunshuai/data/Fakeddit/fakeddit_v1.0/', isVal=True,
+    val_dataset = FakedditDataset('/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/', isVal=True,
                                   bert_path=BERT_PATH,
-                                  max_sequence_length=150,
+                                  max_sequence_length=256,
                                   num_class=2)
 
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE_PER_GPU * GPU_COUNT, shuffle=True)
@@ -61,7 +63,10 @@ if __name__ == '__main__':
                  f"validate data all steps : {len(val_loader)},"
                  f"test data all steps : {len(test_loader)}")
 
-    model = DataParallel(PureBert(bert_path=BERT_PATH))
+    model = PureBert(bert_path=BERT_PATH)
+    # model = load_parallel_save_model(CHECK_POINT, model)
+
+    model = DataParallel(model)
 
     model = model.cuda()
 
@@ -87,12 +92,12 @@ if __name__ == '__main__':
                     epochs=10,
                     print_step=10,
                     early_stop_patience=3,
-                    save_model_path='./save_model',
-                    save_model_every_epoch=False,
+                    save_model_path='/sdd/yujunshuai/save_model/pure_bert',
+                    save_model_every_epoch=True,
                     metric=accuracy_score,
                     num_class=2,
                     scheduler=scheduler,
-                    model_checkpoint='./save_model/pure-best-validate-model.pt')
+                    tensorboard_path='/sdd/yujunshuai/tensorboard_log')
 
     trainer.train()
     print(f"Testing result :{trainer.test()}")
