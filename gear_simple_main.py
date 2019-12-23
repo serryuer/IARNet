@@ -1,5 +1,4 @@
 import logging
-import os
 
 import torch
 from sklearn.metrics import *
@@ -8,10 +7,9 @@ from torch_geometric.data import DataListLoader
 from torch_geometric.nn import DataParallel
 from transformers import AdamW
 
-from data_utils.FakedditGEARDataset import FakedditGEARDataset
+from data_utils.FakedditGEARSimpleDataset import FakedditGEARSimpleDataset
 from model.GEAR import GEAR
 from trainer import Train
-from model.util import load_parallel_save_model
 
 # log format
 C_LogFormat = '%(asctime)s - %(levelname)s - %(message)s'
@@ -38,18 +36,18 @@ def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_st
 
 
 if __name__ == '__main__':
-    train_dataset = FakedditGEARDataset('/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/',
-                                        bert_path=BERT_PATH,
-                                        max_sequence_length=256,
-                                        num_class=2)
-    test_dataset = FakedditGEARDataset('/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/', isTest=True,
-                                       bert_path=BERT_PATH,
-                                       max_sequence_length=256,
-                                       num_class=2)
-    val_dataset = FakedditGEARDataset('/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/', isVal=True,
-                                      bert_path=BERT_PATH,
-                                      max_sequence_length=256,
-                                      num_class=2)
+    train_dataset = FakedditGEARSimpleDataset('/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/',
+                                              bert_path=BERT_PATH,
+                                              max_sequence_length=256,
+                                              num_class=2)
+    test_dataset = FakedditGEARSimpleDataset('/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/', isTest=True,
+                                             bert_path=BERT_PATH,
+                                             max_sequence_length=256,
+                                             num_class=2)
+    val_dataset = FakedditGEARSimpleDataset('/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/', isVal=True,
+                                            bert_path=BERT_PATH,
+                                            max_sequence_length=256,
+                                            num_class=2)
 
     train_loader = DataListLoader(train_dataset, batch_size=BATCH_SIZE_PER_GPU * GPU_COUNT, shuffle=True)
     test_loader = DataListLoader(test_dataset, batch_size=int(BATCH_SIZE_PER_GPU * GPU_COUNT * 15), shuffle=True)
@@ -76,7 +74,7 @@ if __name__ == '__main__':
     optimizer = AdamW(optimizer_grouped_parameters, lr=2e-5, eps=1e-8)
     crit = torch.nn.CrossEntropyLoss()
 
-    trainer = Train(model_name='gear-from-zero',
+    trainer = Train(model_name='gear-simple',
                     train_loader=train_loader,
                     val_loader=val_loader,
                     test_loader=test_loader,
@@ -86,7 +84,7 @@ if __name__ == '__main__':
                     epochs=10,
                     print_step=10,
                     early_stop_patience=3,
-                    save_model_path='/sdd/yujunshuai/save_model/gear',
+                    save_model_path='/sdd/yujunshuai/save_model/gear-simple',
                     save_model_every_epoch=True,
                     metric=accuracy_score,
                     num_class=2,

@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader
 from transformers import AdamW
 
 from data_utils.MultiModalDataset import MultiModalDataset
+from model.PureVgg import PureVGG
 from model.SpotFake import SpotFake
 from model.util import load_parallel_save_model
 from trainer import Train
@@ -25,7 +26,7 @@ logging.basicConfig(level=logging.INFO, format=C_LogFormat)
 
 BERT_PATH = '/home/tanghengzhu/yjs/model/bert-base-uncased_L-24_H-1024_A-16'
 
-BATCH_SIZE_PER_GPU = 160
+BATCH_SIZE_PER_GPU = 128
 GPU_COUNT = torch.cuda.device_count()
 
 
@@ -65,7 +66,7 @@ if __name__ == '__main__':
                  f"validate data all steps : {len(val_loader)},"
                  f"test data all steps : {len(test_loader)}")
 
-    model = SpotFake(num_class=2, bert_path=BERT_PATH, bert_trainable = False, vgg_trainable=False)
+    model = PureVGG(num_class=2, vgg_trainable=True)
     # model = load_parallel_save_model('./save_model/spotfake/best-validate-model.pt', model)
     model = DataParallel(model)
 
@@ -83,7 +84,7 @@ if __name__ == '__main__':
     scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=0, num_training_steps=len(train_loader))
     crit = torch.nn.CrossEntropyLoss()
 
-    trainer = Train(model_name='spot-fake-wo-finetune',
+    trainer = Train(model_name='pure-vgg',
                     train_loader=train_loader,
                     val_loader=val_loader,
                     test_loader=test_loader,
@@ -93,7 +94,7 @@ if __name__ == '__main__':
                     epochs=10,
                     print_step=1,
                     early_stop_patience=2,
-                    save_model_path='./save_model/spotfake',
+                    save_model_path='./save_model/pure-vgg',
                     save_model_every_epoch=True,
                     metric=accuracy_score,
                     num_class=2,

@@ -1,5 +1,5 @@
 import logging
-import os
+import ssl
 
 import torch
 from sklearn.metrics import *
@@ -10,10 +10,8 @@ from transformers import AdamW
 
 from data_utils.MultiModalDataset import MultiModalDataset
 from model.MulimodalBert import MultimodalBertForClassification
-from model.SpotFake import SpotFake
 from trainer import Train
-
-import ssl
+from model.util import load_parallel_save_model
 
 ssl._create_default_https_context = ssl._create_unverified_context
 # log format
@@ -63,8 +61,9 @@ if __name__ == '__main__':
     test_loader = DataLoader(test_dataset, batch_size=int(BATCH_SIZE_PER_GPU * GPU_COUNT * 15), shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=int(BATCH_SIZE_PER_GPU * GPU_COUNT * 15), shuffle=True)
 
-    model = DataParallel(MultimodalBertForClassification(num_class=2,
-                                                         bert_path=BERT_PATH))
+    model = MultimodalBertForClassification(num_class=2, bert_path=BERT_PATH)
+    model = load_parallel_save_model('./save_model/mbert/best-validate-model.pt', model)
+    model = DataParallel(model)
 
     model = model.cuda()
 
@@ -92,14 +91,13 @@ if __name__ == '__main__':
                     optimizer=optimizer,
                     loss_fn=crit,
                     epochs=10,
-                    print_step=100,
+                    print_step=10,
                     early_stop_patience=3,
                     save_model_path='./save_model/mbert',
                     save_model_every_epoch=True,
                     metric=accuracy_score,
                     num_class=2,
-                    scheduler=scheduler,
-                    model_checkpoint=None)
+                    tensorboard_path='./tensorboard_log')
 
     trainer.train()
     print(f"Testing result :{trainer.test()}")

@@ -1,31 +1,42 @@
 import logging
 import os
+import random
 
 import torch
 from sklearn.metrics import *
 from torch.optim.lr_scheduler import LambdaLR
+from torch.utils.data import SubsetRandomSampler
 from torch_geometric.data import DataListLoader
 from torch_geometric.nn import DataParallel
 from transformers import AdamW
 
 from data_utils.FakedditGEARDataset import FakedditGEARDataset
+from data_utils.WeiboGraphDataset import WeiboGraphDataset
 from model.GEAR import GEAR
+from model.MultiModalHAN import MultiModalHANClassification
 from trainer import Train
 from model.util import load_parallel_save_model
+import numpy as np
 
 # log format
 C_LogFormat = '%(asctime)s - %(levelname)s - %(message)s'
 # setting log format
-logging.basicConfig(level=logging.INFO, format=C_LogFormat)
+logging.basicConfig(level=logging.DEBUG, format=C_LogFormat)
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 # os.environ['CUDA_VISIBLE_DEVICES'] = '0,3,5,6,7'
 # os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2,3,4,5,6,7'
 
-BERT_PATH = '/sdd/yujunshuai/model/bert-base-uncased_L-24_H-1024_A-16'
+BERT_PATH = '/sdd/yujunshuai/model/chinese_L-12_H-768_A-12'
 
-BATCH_SIZE_PER_GPU = 3
+BATCH_SIZE_PER_GPU = 15
 GPU_COUNT = torch.cuda.device_count()
+
+seed = 1024
+
+random.seed(seed)
+torch.manual_seed(seed)
+torch.cuda.manual_seed(seed)
 
 
 def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_steps, last_epoch=-1):
@@ -38,29 +49,24 @@ def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_st
 
 
 if __name__ == '__main__':
-    train_dataset = FakedditGEARDataset('/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/',
-                                        bert_path=BERT_PATH,
-                                        max_sequence_length=256,
-                                        num_class=2)
-    test_dataset = FakedditGEARDataset('/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/', isTest=True,
-                                       bert_path=BERT_PATH,
-                                       max_sequence_length=256,
-                                       num_class=2)
-    val_dataset = FakedditGEARDataset('/sdd/yujunshuai/data/Fakeddit/fakeddit_v1.0/', isVal=True,
-                                      bert_path=BERT_PATH,
-                                      max_sequence_length=256,
-                                      num_class=2)
+    dataset = WeiboGraphDataset('/sdd/yujunshuai/data/weibo/',
+                                bert_path=BERT_PATH,
+                                data_max_sequence_length=256,
+                                commen_max_sequence_length=256,
+                                max_comment_num=50)
+
+    train_size = int(0.9 * len(dataset))
+    test_size = len(dataset) - train_size
+    train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, test_size])
 
     train_loader = DataListLoader(train_dataset, batch_size=BATCH_SIZE_PER_GPU * GPU_COUNT, shuffle=True)
-    test_loader = DataListLoader(test_dataset, batch_size=int(BATCH_SIZE_PER_GPU * GPU_COUNT * 15), shuffle=True)
-    val_loader = DataListLoader(val_dataset, batch_size=int(BATCH_SIZE_PER_GPU * GPU_COUNT * 15), shuffle=True)
+    val_loader = DataListLoader(val_dataset, batch_size=int(BATCH_SIZE_PER_GPU * GPU_COUNT), shuffle=True)
 
-    logging.debug(f"train data all steps: {len(train_loader)}, "
-                  f"validate data all steps : {len(val_loader)},"
-                  f"test data all steps : {len(test_loader)}")
+    logging.debug(f"train data all steps: {len(train_loader)}, validate data all steps : {len(val_loader)}")
 
-    model = GEAR(num_class=2, bert_path=BERT_PATH)
-    # model = load_parallel_save_model('/sdd/yujunshuai/save_model/gear/best-validate-model.pt', model)
+    model = MultiModalHANClassification(num_class=2, bert_path=BERT_PATH)
+    # model = load_parallel_save_model(
+    #     '/sdd/yujunshuai/save_model/weibo_multimodal_han/weibo_multimodal_han-0-0.4127604166666667.pt', model)
     model = DataParallel(model)
 
     model = model.cuda(0)
@@ -76,21 +82,20 @@ if __name__ == '__main__':
     optimizer = AdamW(optimizer_grouped_parameters, lr=2e-5, eps=1e-8)
     crit = torch.nn.CrossEntropyLoss()
 
-    trainer = Train(model_name='gear-from-zero',
+    trainer = Train(model_name='weibo_multimodal_han',
                     train_loader=train_loader,
                     val_loader=val_loader,
-                    test_loader=test_loader,
+                    test_loader=None,
                     model=model,
                     optimizer=optimizer,
                     loss_fn=crit,
-                    epochs=10,
-                    print_step=10,
+                    epochs=100,
+                    print_step=1,
                     early_stop_patience=3,
-                    save_model_path='/sdd/yujunshuai/save_model/gear',
+                    save_model_path='/sdd/yujunshuai/save_model/weibo_multimodal_han',
                     save_model_every_epoch=True,
                     metric=accuracy_score,
                     num_class=2,
                     tensorboard_path='/sdd/yujunshuai/tensorboard_log')
-
     trainer.train()
-    print(f"Testing result :{trainer.test()}")
+    # trainer.eval()

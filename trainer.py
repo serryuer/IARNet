@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO, format=C_LogFormat)
 
 class Train(object):
     def __init__(self, model_name, train_loader, val_loader, test_loader, model, optimizer, loss_fn, epochs, print_step,
-                 early_stop_patience, save_model_path, num_class, scheduler, save_model_every_epoch=False,
+                 early_stop_patience, save_model_path, num_class, save_model_every_epoch=False,
                  metric=f1_score, tensorboard_path=None):
         self.model_name = model_name
         self.train_loader = train_loader
@@ -32,7 +32,6 @@ class Train(object):
         self.save_model_path = save_model_path
         self.metric = metric
         self.num_class = num_class
-        self.scheduler = scheduler
 
         self.tensorboard_path = tensorboard_path
 
@@ -75,27 +74,33 @@ class Train(object):
                 eval_loss += tmp_eval_loss.mean().item()
                 if preds is None:
                     preds = logits.detach().cpu().numpy()
-                    if self.model_name == 'gear':
+                    if self.model_name.startswith('gear'):
                         true_labels = torch.stack([data.y for data in batch_data], dim=0). \
                             squeeze(-1).detach().cpu().numpy()
-                    elif self.model_name == 'pure-bert':
+                    elif self.model_name.startswith('pure-bert'):
                         true_labels = batch_data[3].detach().cpu().numpy()
-                    elif self.model_name == 'spot-fake':
+                    elif self.model_name.startswith('spot-fake') or self.model_name.startswith('pure-vgg'):
                         true_labels = batch_data[3].detach().cpu().numpy()
                     elif self.model_name == 'mbert':
                         true_labels = batch_data[3].detach().cpu().numpy()
+                    elif self.model_name == 'weibo_multimodal_han':
+                        true_labels = torch.stack([data.y for data in batch_data], dim=0). \
+                            squeeze(-1).detach().cpu().numpy()
 
                 else:
                     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
-                    if self.model_name == 'gear':
+                    if self.model_name.startswith('gear'):
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0) \
                                                 .squeeze(-1).detach().cpu().numpy(), axis=0)
-                    elif self.model_name == 'pure-bert':
+                    elif self.model_name.startswith('pure-bert'):
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
-                    elif self.model_name == 'spot-fake':
+                    elif self.model_name.startswith('spot-fake') or self.model_name.startswith('pure-vgg'):
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
                     elif self.model_name == 'mbert':
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
+                    elif self.model_name == 'weibo_multimodal_han':
+                        true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0). \
+                                                squeeze(-1).detach().cpu().numpy(), axis=0)
         preds = np.argmax(preds, axis=1)
         result = {}
         result['accuracy'] = accuracy_score(true_labels, preds)
@@ -108,6 +113,7 @@ class Train(object):
         preds = None
         true_labels = None
         for epoch in range(self.epochs):
+            tr_loss = 0.0
             logging.info(f"## The {epoch} Epoch, all {self.epochs} Epochs ! ##")
             logging.info(f"The current learning rate is {self.optimizer.param_groups[0].get('lr')}")
             self.model.train()
@@ -119,45 +125,54 @@ class Train(object):
                 loss = loss.mean()
                 loss.backward()
                 self.optimizer.step()
-                self.scheduler.step()
                 tr_loss += loss.mean().item()
                 if preds is None:
                     preds = logits.detach().cpu().numpy()
-                    if self.model_name == 'gear':
+                    if self.model_name.startswith('gear'):
                         true_labels = torch.stack([data.y for data in batch_data], dim=0). \
                             squeeze(-1).detach().cpu().numpy()
-                    elif self.model_name == 'pure-bert':
+                    elif self.model_name.startswith('pure-bert'):
                         true_labels = batch_data[3].detach().cpu().numpy()
-                    elif self.model_name == 'spot-fake':
+                    elif self.model_name.startswith('spot-fake') or self.model_name.startswith('pure-vgg'):
                         true_labels = batch_data[3].detach().cpu().numpy()
                     elif self.model_name == 'mbert':
                         true_labels = batch_data[3].detach().cpu().numpy()
+                        true_labels = torch.stack([data.y for data in batch_data], dim=0). \
+                            squeeze(-1).detach().cpu().numpy()
+                    elif self.model_name == 'weibo_multimodal_han':
+                        true_labels = torch.stack([data.y for data in batch_data], dim=0). \
+                            squeeze(-1).detach().cpu().numpy()
                 else:
                     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
-                    if self.model_name == 'gear':
+                    if self.model_name.startswith('gear'):
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0). \
                                                 squeeze(-1).detach().cpu().numpy(), axis=0)
-                    elif self.model_name == 'pure-bert':
+                    elif self.model_name.startswith('pure-bert'):
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
-                    elif self.model_name == 'spot-fake':
+                    elif self.model_name.startswith('spot-fake') or self.model_name.startswith('pure-vgg'):
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
                     elif self.model_name == 'mbert':
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
+                    elif self.model_name == 'weibo_multimodal_han':
+                        true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0). \
+                                                squeeze(-1).detach().cpu().numpy(), axis=0)
+
                 if (batch_count + 1) % self.print_step == 0:
                     pred_label = np.argmax(preds, axis=1)
-                    logging.info(f"batch {batch_count + 1} : loss is {tr_loss / batch_count}, "
+                    logging.info(f"batch {batch_count + 1} : loss is {tr_loss / (batch_count + 1)}, "
                                  f"accuracy is {accuracy_score(true_labels, pred_label)}, "
                                  f"recall is {recall_score(true_labels, pred_label, average='macro')}, "
                                  f"f1 is {f1_score(true_labels, pred_label, average='macro')}")
-                    self.tb_writer.add_scalar(f'{self.model_name}-scalar/train_loss', tr_loss / batch_count,
-                                              batch_count)
+                    self.tb_writer.add_scalar(f'{self.model_name}-scalar/train_loss', tr_loss / (batch_count + 1),
+                                              batch_count + epoch * len(self.train_loader))
                     self.tb_writer.add_scalar(f'{self.model_name}-scalar/train_accuracy',
                                               accuracy_score(true_labels, pred_label),
-                                              batch_count)
+                                              batch_count + epoch * len(self.train_loader))
                     self.tb_writer.add_scalar(f'{self.model_name}-scalar/train_recall',
-                                              recall_score(true_labels, pred_label), batch_count)
+                                              recall_score(true_labels, pred_label),
+                                              batch_count + epoch * len(self.train_loader))
                     self.tb_writer.add_scalar(f'{self.model_name}-scalar/train_f1', f1_score(true_labels, pred_label),
-                                              batch_count)
+                                              batch_count + epoch * len(self.train_loader))
 
             val_score = self.eval()
             self.tb_writer.add_scalar(f'{self.model_name}-scalar/validate_accuracy', val_score['accuracy'], epoch)
@@ -185,27 +200,33 @@ class Train(object):
                 test_loss += tmp_eval_loss.mean().item()
                 if preds is None:
                     preds = logits.detach().cpu().numpy()
-                    if self.model_name == 'gear':
+                    if self.model_name.startswith('gear'):
                         true_labels = torch.stack([data.y for data in batch_data], dim=0). \
                             squeeze(-1).detach().cpu().numpy()
-                    elif self.model_name == 'pure-bert':
+                    elif self.model_name.startswith('pure-bert'):
                         true_labels = batch_data[3].detach().cpu().numpy()
-                    elif self.model_name == 'spot-fake':
+                    elif self.model_name.startswith('spot-fake') or self.model_name.startswith('pure-vgg'):
                         true_labels = batch_data[3].detach().cpu().numpy()
                     elif self.model_name == 'mbert':
                         true_labels = batch_data[3].detach().cpu().numpy()
+                    elif self.model_name == 'weibo_multimodal_han':
+                        true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0). \
+                                                squeeze(-1).detach().cpu().numpy(), axis=0)
 
                 else:
                     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
-                    if self.model_name == 'gear':
+                    if self.model_name.startswith('gear'):
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0) \
                                                 .squeeze(-1).detach().cpu().numpy(), axis=0)
-                    elif self.model_name == 'pure-bert':
+                    elif self.model_name.startswith('pure-bert'):
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
-                    elif self.model_name == 'spot-fake':
+                    elif self.model_name.startswith('spot-fake') or self.model_name.startswith('pure-vgg'):
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
                     elif self.model_name == 'mbert':
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
+                    elif self.model_name == 'weibo_multimodal_han':
+                        true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0). \
+                                                squeeze(-1).detach().cpu().numpy(), axis=0)
         preds = np.argmax(preds, axis=1)
         result = {}
         result['accuracy'] = accuracy_score(true_labels, preds)

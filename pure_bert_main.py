@@ -79,7 +79,7 @@ if __name__ == '__main__':
     ]
 
     optimizer = AdamW(optimizer_grouped_parameters, lr=2e-5, eps=1e-8)
-    scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=0, num_training_steps=len(train_loader))
+    # scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=0, num_training_steps=len(train_loader))
     crit = torch.nn.CrossEntropyLoss()
 
     trainer = Train(model_name='pure-bert',
@@ -96,8 +96,10 @@ if __name__ == '__main__':
                     save_model_every_epoch=True,
                     metric=accuracy_score,
                     num_class=2,
-                    scheduler=scheduler,
                     tensorboard_path='/sdd/yujunshuai/tensorboard_log')
 
     trainer.train()
     print(f"Testing result :{trainer.test()}")
+
+# pure bert
+# Testing result :{'accuracy': 0.880089848977251, 'recall': 0.8658997206940136, 'f1': 0.8698654132943923}

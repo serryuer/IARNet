@@ -36,9 +36,11 @@ def load_vgg_from_file(vgg_Path):
 
 
 class SpotFake(nn.Module):
-    def __init__(self, num_class, bert_path):
+    def __init__(self, num_class, bert_path, bert_trainable=True, vgg_trainable=True):
         super(SpotFake, self).__init__()
         self.num_class = num_class
+        self.bert_trainable = bert_trainable
+        self.vgg_trainable = vgg_trainable
         self.bert = BertModel.from_pretrained(bert_path)
         self.text_lin = nn.Linear(768, 32)
 
@@ -60,8 +62,16 @@ class SpotFake(nn.Module):
 
     def forward(self, input):
         input_ids, attention_masks, img_tensors = input[0], input[1], input[2]
-        text_features = self.bert(input_ids, attention_masks)[1]
-        img_features = self.vgg(img_tensors)
+        if self.bert_trainable:
+            text_features = self.bert(input_ids, attention_masks)[1]
+        else:
+            with torch.no_grad():
+                text_features = self.bert(input_ids, attention_masks)[1]
+        if self.vgg_trainable:
+            img_features = self.vgg(img_tensors)
+        else:
+            with torch.no_grad():
+                img_features = self.vgg(img_tensors)
         img_features = img_features.view(img_features.size(0), -1)
         all_features = torch.cat([self.text_lin(text_features), self.img_lin(img_features)], dim=-1)
 
