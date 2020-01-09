@@ -9,6 +9,8 @@ from sklearn.metrics import *
 from tensorboardX import SummaryWriter
 from tqdm import tqdm
 
+from model.util import load_parallel_save_model
+
 C_LogFormat = '%(asctime)s - %(levelname)s - %(message)s'
 # setting log format
 logging.basicConfig(level=logging.INFO, format=C_LogFormat)
@@ -54,15 +56,17 @@ class Train(object):
             self.best_val_epoch = epoch
             self._save_model('best-validate-model')
         else:
-            logging.info(f"Validate has not promote {epoch - self.best_val_epoch}/{self.early_stop_patience}")
+            logging.info(self.model_name + f"-epoch {epoch}" + ":"
+                         + self.model_name + f"Validate has not promote {epoch - self.best_val_epoch}/{self.early_stop_patience}")
             if epoch - self.best_val_epoch > self.early_stop_patience:
-                logging.info(f"Early Stop Train, best score locate on {self.best_val_epoch}, "
+                logging.info(self.model_name + f"-epoch {epoch}" + ":"
+                             + f"Early Stop Train, best score locate on {self.best_val_epoch}, "
                              f"the best score is {self.best_val_score}")
                 return True
         return False
 
     def eval(self):
-        logging.info("## Start to evaluate. ##")
+        logging.info(self.model_name + ":" + "## Start to evaluate. ##")
         self.model.eval()
         eval_loss = 0.0
         preds = None
@@ -74,7 +78,8 @@ class Train(object):
                 eval_loss += tmp_eval_loss.mean().item()
                 if preds is None:
                     preds = logits.detach().cpu().numpy()
-                    if self.model_name.startswith('gear'):
+                    if self.model_name.startswith('gear') or self.model_name.startswith(
+                            'weibo') or self.model_name.startswith('fakeddit_han'):
                         true_labels = torch.stack([data.y for data in batch_data], dim=0). \
                             squeeze(-1).detach().cpu().numpy()
                     elif self.model_name.startswith('pure-bert'):
@@ -83,13 +88,14 @@ class Train(object):
                         true_labels = batch_data[3].detach().cpu().numpy()
                     elif self.model_name == 'mbert':
                         true_labels = batch_data[3].detach().cpu().numpy()
-                    elif self.model_name == 'weibo_multimodal_han':
+                    elif self.model_name == 'weibo_han_comments':
                         true_labels = torch.stack([data.y for data in batch_data], dim=0). \
                             squeeze(-1).detach().cpu().numpy()
 
                 else:
                     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
-                    if self.model_name.startswith('gear'):
+                    if self.model_name.startswith('gear') or self.model_name.startswith(
+                            'weibo') or self.model_name.startswith('fakeddit_han'):
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0) \
                                                 .squeeze(-1).detach().cpu().numpy(), axis=0)
                     elif self.model_name.startswith('pure-bert'):
@@ -98,7 +104,7 @@ class Train(object):
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
                     elif self.model_name == 'mbert':
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
-                    elif self.model_name == 'weibo_multimodal_han':
+                    elif self.model_name == 'weibo_han_comments':
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0). \
                                                 squeeze(-1).detach().cpu().numpy(), axis=0)
         preds = np.argmax(preds, axis=1)
@@ -109,26 +115,28 @@ class Train(object):
         return result
 
     def train(self):
-        tr_loss = 0.0
         preds = None
         true_labels = None
         for epoch in range(self.epochs):
             tr_loss = 0.0
-            logging.info(f"## The {epoch} Epoch, all {self.epochs} Epochs ! ##")
-            logging.info(f"The current learning rate is {self.optimizer.param_groups[0].get('lr')}")
+            logging.info(self.model_name + f"-epoch {epoch}" + ":"
+                         + f"## The {epoch} Epoch, all {self.epochs} Epochs ! ##")
+            logging.info(self.model_name + f"-epoch {epoch}" + ":"
+                         + f"The current learning rate is {self.optimizer.param_groups[0].get('lr')}")
             self.model.train()
             since = time.time()
             for batch_count, batch_data in enumerate(self.train_loader):
                 self.optimizer.zero_grad()
                 outputs = self.model(batch_data)
                 loss, logits = outputs[:2]
-                loss = loss.mean()
+                loss = loss.sum()
                 loss.backward()
                 self.optimizer.step()
                 tr_loss += loss.mean().item()
                 if preds is None:
                     preds = logits.detach().cpu().numpy()
-                    if self.model_name.startswith('gear'):
+                    if self.model_name.startswith('gear') or self.model_name.startswith(
+                            'weibo') or self.model_name.startswith('fakeddit_han'):
                         true_labels = torch.stack([data.y for data in batch_data], dim=0). \
                             squeeze(-1).detach().cpu().numpy()
                     elif self.model_name.startswith('pure-bert'):
@@ -139,12 +147,13 @@ class Train(object):
                         true_labels = batch_data[3].detach().cpu().numpy()
                         true_labels = torch.stack([data.y for data in batch_data], dim=0). \
                             squeeze(-1).detach().cpu().numpy()
-                    elif self.model_name == 'weibo_multimodal_han':
+                    elif self.model_name == 'weibo_han_comments':
                         true_labels = torch.stack([data.y for data in batch_data], dim=0). \
                             squeeze(-1).detach().cpu().numpy()
                 else:
                     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
-                    if self.model_name.startswith('gear'):
+                    if self.model_name.startswith('gear') or self.model_name.startswith(
+                            'weibo') or self.model_name.startswith('fakeddit_han'):
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0). \
                                                 squeeze(-1).detach().cpu().numpy(), axis=0)
                     elif self.model_name.startswith('pure-bert'):
@@ -153,13 +162,14 @@ class Train(object):
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
                     elif self.model_name == 'mbert':
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
-                    elif self.model_name == 'weibo_multimodal_han':
+                    elif self.model_name == 'weibo_han_comments':
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0). \
                                                 squeeze(-1).detach().cpu().numpy(), axis=0)
 
                 if (batch_count + 1) % self.print_step == 0:
                     pred_label = np.argmax(preds, axis=1)
-                    logging.info(f"batch {batch_count + 1} : loss is {tr_loss / (batch_count + 1)}, "
+                    logging.info(self.model_name + f"-epoch {epoch}" + ":"
+                                 + f"batch {batch_count + 1} : loss is {tr_loss / (batch_count + 1)}, "
                                  f"accuracy is {accuracy_score(true_labels, pred_label)}, "
                                  f"recall is {recall_score(true_labels, pred_label, average='macro')}, "
                                  f"f1 is {f1_score(true_labels, pred_label, average='macro')}")
@@ -179,8 +189,9 @@ class Train(object):
             self.tb_writer.add_scalar(f'{self.model_name}-scalar/validate_recall', val_score['recall'], epoch)
             self.tb_writer.add_scalar(f'{self.model_name}-scalar/validate_f1', val_score['f1'], epoch)
 
-            logging.info(
-                f"Epoch {epoch} Finished with time {format(time.time() - since)}, validate accuracy score {val_score}")
+            logging.info(self.model_name + ": epoch" +
+                         f"Epoch {epoch} Finished with time {format(time.time() - since)}, " +
+                         f"validate accuracy score {val_score}")
             if self.save_model_every_epoch:
                 self._save_model(f"{self.model_name}-{epoch}-{val_score['accuracy']}")
             if self._early_stop(epoch, val_score['accuracy']):
@@ -188,7 +199,8 @@ class Train(object):
         self.tb_writer.close()
 
     def test(self):
-        logging.info("## Start to Test. ##")
+        logging.info(self.model_name + ":" + "## Start to Test. ##")
+        self.model = load_parallel_save_model(os.path.join(self.save_model_path, 'best-validate-model.pt'), self.model)
         self.model.eval()
         test_loss = 0.0
         preds = None
@@ -200,7 +212,8 @@ class Train(object):
                 test_loss += tmp_eval_loss.mean().item()
                 if preds is None:
                     preds = logits.detach().cpu().numpy()
-                    if self.model_name.startswith('gear'):
+                    if self.model_name.startswith('gear') or self.model_name.startswith(
+                            'weibo') or self.model_name.startswith('fakeddit_han'):
                         true_labels = torch.stack([data.y for data in batch_data], dim=0). \
                             squeeze(-1).detach().cpu().numpy()
                     elif self.model_name.startswith('pure-bert'):
@@ -209,13 +222,14 @@ class Train(object):
                         true_labels = batch_data[3].detach().cpu().numpy()
                     elif self.model_name == 'mbert':
                         true_labels = batch_data[3].detach().cpu().numpy()
-                    elif self.model_name == 'weibo_multimodal_han':
+                    elif self.model_name == 'weibo_han_comments':
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0). \
                                                 squeeze(-1).detach().cpu().numpy(), axis=0)
 
                 else:
                     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
-                    if self.model_name.startswith('gear'):
+                    if self.model_name.startswith('gear') or self.model_name.startswith(
+                            'weibo') or self.model_name.startswith('fakeddit_han'):
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0) \
                                                 .squeeze(-1).detach().cpu().numpy(), axis=0)
                     elif self.model_name.startswith('pure-bert'):
@@ -224,12 +238,17 @@ class Train(object):
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
                     elif self.model_name == 'mbert':
                         true_labels = np.append(true_labels, batch_data[3].detach().cpu().numpy(), axis=0)
-                    elif self.model_name == 'weibo_multimodal_han':
+                    elif self.model_name == 'weibo_han_comments':
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0). \
                                                 squeeze(-1).detach().cpu().numpy(), axis=0)
         preds = np.argmax(preds, axis=1)
         result = {}
         result['accuracy'] = accuracy_score(true_labels, preds)
-        result['recall'] = recall_score(true_labels, preds, average='macro')
-        result['f1'] = f1_score(true_labels, preds, average='macro')
+        result['precision'] = precision_score(true_labels, preds, average=None)
+        result['recall'] = recall_score(true_labels, preds, average=None)
+        result['f1'] = f1_score(true_labels, preds, average=None)
+        with open('test_result.txt', mode='a', encoding='utf-8') as f:
+            f.write(self.model_name + '\n')
+            f.write(str(result) + '\n')
+            f.write('\n')
         return result

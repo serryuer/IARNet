@@ -6,7 +6,7 @@ from torch.nn import CrossEntropyLoss
 from torchvision.models import ResNet
 from torchvision.models.resnet import Bottleneck
 from transformers import BertPreTrainedModel
-from transformers.modeling_bert import BertEncoder, BertPooler, BertLayer, BertEmbeddings, BertModel
+from transformers.modeling_bert import BertEncoder, BertPooler, BertLayer, BertEmbeddings
 
 model_urls = {
     'resnet152': 'https://download.pytorch.org/models/resnet152-b121ed2d.pth'

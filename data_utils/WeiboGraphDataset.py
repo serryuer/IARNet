@@ -4,13 +4,16 @@ import random
 import re
 from itertools import repeat
 
-import numpy as np
-import torch
+import jieba
 from PIL import Image
 from torch_geometric.data import Data, InMemoryDataset
 from torchvision import transforms as T
 from tqdm import tqdm
-import jieba
+from random import random
+from random import randint
+import numpy as np
+import torch
+from transformers import BertTokenizer
 
 
 class ValueFeatureOneHotEncoder(object):
@@ -29,18 +32,29 @@ class ValueFeatureOneHotEncoder(object):
 
 
 class WeiboGraphDataset(InMemoryDataset):
-    def __init__(self, root, w2id,
+    def __init__(self, root, w2id, step,
                  transform=None,
                  pre_transform=None,
                  data_max_sequence_length=256,
                  comment_max_sequence_length=256,
-                 max_comment_num=10):
+                 max_comment_num=10,
+                 restart_prob=0.5,
+                 delay=1000,
+                 tokenizer=None):
         self.w2id = w2id
         self.unkown_idx = len(w2id)
+        self.step = step
         self.data_max_sequence_length = data_max_sequence_length
         self.comment_max_sequence_length = comment_max_sequence_length
         self.max_comment_num = max_comment_num
         self.root = root
+        self.restart_prob = restart_prob
+        self.delay = delay
+        self.tokenizer = tokenizer
+        if self.tokenizer is not None:
+            self.use_bert = True
+        else:
+            self.use_bert = False
         normalize = T.Normalize(mean=[0.485, 0.456, 0.406],
                                 std=[0.229, 0.224, 0.225])
         self.transforms = T.Compose([
@@ -60,35 +74,90 @@ class WeiboGraphDataset(InMemoryDataset):
 
     @property
     def processed_file_names(self):
-        return ['weibo_glove.dataset']
+        if self.use_bert:
+            return [f'weibo_bert_{self.max_comment_num}_{self.restart_prob}_{self.delay}_{self.step}.dataset']
+        else:
+            return [f'weibo_glove_{self.max_comment_num}_{self.restart_prob}_{self.delay}_{self.step}.dataset']
 
     def download(self):
         pass
 
-    class BertInputFeatures(object):
-        """Private helper class for holding BERT-formatted features"""
+    class Comment(object):
+        def __init__(self, comment_text, comment_feature):
+            self.comment_text = comment_text
+            self.comment_feature = comment_feature
 
-        def __init__(
-                self,
-                tokens,
-                input_ids,
-                input_mask,
-                segment_ids,
-        ):
-            self.tokens = tokens
-            self.input_ids = input_ids
-            self.input_mask = input_mask
-            self.segment_ids = segment_ids
+    class CommentNode(object):
+        def __init__(self, comment):
+            self.comment = comment
+            self.children = []
+
+    def prepare_comment_features(self, data_list):
+        comment_text = []
+        comment_features = []
+        not_top_level_comment_idx = []
+        comment_ids = []
+        comment_parent_ids = []
+        for i in range(1, len(data_list)):
+            comment = data_list[i]
+            if comment['t'] - data_list[0]['t'] > self.delay * 60 * 60:
+                continue
+            text = self.preprocessing_text(comment['text'])
+            if text is None or len(text) <= 2:
+                continue
+            comment_text.append(self.convert_sentence_to_features(text, self.comment_max_sequence_length))
+            comment_features.append(self.get_comment_features(comment))
+            if comment['parent'] != data_list[0]['mid']:
+                not_top_level_comment_idx.append(len(comment_features) - 1)
+            comment_ids.append(comment['mid'])
+            comment_parent_ids.append(comment['parent'])
+        # construct comment tree
+        comment_tree = {}
+        for idx, comment_feature in enumerate(comment_features):
+            if idx not in not_top_level_comment_idx:
+                comment_tree[str(idx)] = WeiboGraphDataset.CommentNode(
+                    WeiboGraphDataset.Comment(comment_text[idx], comment_feature))
+        ready_to_connect_comment_idx = not_top_level_comment_idx
+        current_level_node = {}
+        last_level_node = comment_tree
+        while len(ready_to_connect_comment_idx) != 0:
+            for idx in ready_to_connect_comment_idx:
+                parent_id = comment_parent_ids[idx]
+                for key in last_level_node:
+                    if comment_ids[int(key)] == parent_id:
+                        node = WeiboGraphDataset.CommentNode(
+                            WeiboGraphDataset.Comment(comment_text[idx], comment_features[idx]))
+                        last_level_node[key].children.append(node)
+                        current_level_node[idx] = node
+                        not_top_level_comment_idx.remove(idx)
+                        break
+            if len(current_level_node) == 0:
+                for idx in ready_to_connect_comment_idx:
+                    comment_tree[str(idx)] = WeiboGraphDataset.CommentNode(
+                        WeiboGraphDataset.Comment(comment_text[idx], comment_features[idx]))
+                break
+            last_level_node = current_level_node
+            current_level_node = {}
+            ready_to_connect_comment_idx = not_top_level_comment_idx
+        return list(comment_tree.values())
 
     def convert_sentence_to_features(self, sentence, max_sequence_length):
-        words = jieba.lcut(sentence)
-        words = words[:max_sequence_length]
-        input_ids = []
-        for word in words:
-            if word in self.w2id:
-                input_ids.append(self.w2id[word])
-            else:
-                input_ids.append(self.unkown_idx)
+        if self.tokenizer is not None:
+            words = self.tokenizer.tokenize(sentence)
+            tokens = ['[CLS]']
+            tokens.extend(words)
+            tokens = tokens[:max_sequence_length - 1]
+            tokens.append('[SEP]')
+            input_ids = self.tokenizer.convert_tokens_to_ids(tokens)
+        else:
+            words = list(jieba.cut(sentence))
+            words = words[:max_sequence_length]
+            input_ids = []
+            for word in words:
+                if word in self.w2id:
+                    input_ids.append(self.w2id[word])
+                else:
+                    input_ids.append(self.unkown_idx)
         input_mask = [1] * len(input_ids)
 
         while len(input_ids) < max_sequence_length:
@@ -100,16 +169,15 @@ class WeiboGraphDataset(InMemoryDataset):
 
         return [input_ids, input_mask]
 
-    def get_padding_features(self, features):
-        max_length = self.max_sequence_length + 2
+    def get_padding_features(self, features, max_sequence_length):
         input_mask = [1] * len(features)
         input_ids = features
-        while len(input_ids) < max_length:
+        while len(input_ids) < max_sequence_length:
             input_ids.append(0)
             input_mask.append(0)
 
-        assert len(input_ids) == max_length
-        assert len(input_mask) == max_length
+        assert len(input_ids) == max_sequence_length
+        assert len(input_mask) == max_sequence_length
 
         return [input_ids, input_mask]
 
@@ -144,7 +212,7 @@ class WeiboGraphDataset(InMemoryDataset):
             all_feature_one_hot.extend([0, 1, 0])
         else:
             all_feature_one_hot.extend([0, 0, 1])
-        return np.array(self.get_padding_features(all_feature_one_hot))
+        return np.array(self.get_padding_features(all_feature_one_hot, self.data_max_sequence_length))
 
     def get_comment_features(self, comment):
         encoder = {}
@@ -168,7 +236,7 @@ class WeiboGraphDataset(InMemoryDataset):
         all_feature_one_hot = []
         for item in encoder.items():
             all_feature_one_hot.extend(item[1].transform(np.array([[int(comment[item[0]])]])).tolist())
-        return np.array(self.get_padding_features(all_feature_one_hot))
+        return np.array(self.get_padding_features(all_feature_one_hot, self.comment_max_sequence_length))
 
     def get_image_features(self, data):
         img_url = data['picture']
@@ -199,20 +267,6 @@ class WeiboGraphDataset(InMemoryDataset):
             return None
         return text
 
-    def prepare_comment_features(self, data_list, data_id):
-        comment_node = []
-        comment_features = []
-        for i in range(1, len(data_list)):
-            comment = data_list[i]
-            if comment['parent'] != data_id:
-                continue
-            text = self.preprocessing_text(comment['text'])
-            if text == None:
-                continue
-            comment_node.append(self.convert_sentence_to_features(text, self.comment_max_sequence_length))
-            comment_features.append(self.get_comment_features(comment))
-        return comment_node, comment_features
-
     def process(self):
         # Read data_utils into huge `Data` list.
         data_list = []
@@ -220,6 +274,7 @@ class WeiboGraphDataset(InMemoryDataset):
         with open(os.path.join(self.root, 'Weibo.txt')) as all_samples:
             sample = all_samples.readline()
             while sample != '':
+                sample = all_samples.readline()
                 pbar.update(1)
                 print()
                 try:
@@ -234,34 +289,58 @@ class WeiboGraphDataset(InMemoryDataset):
                         target_nodes_comment_profile_to_comment = []
                         source_nodes_comment_to_data = []
                         target_nodes_comment_to_data = []
+                        source_nodes_data_to_comment = []
+                        target_nodes_data_to_comment = []
                         source_nodes_data_profile_to_data = []
                         target_nodes_data_profile_to_data = []
+                        source_nodes_comment_to_comment = []
+                        target_nodes_comment_to_comment = []
+                        if len(sample_json[0]['text']) < 10:
+                            continue
                         root_node_features = self.convert_sentence_to_features(sample_json[0]['text'],
                                                                                self.data_max_sequence_length)
                         node_type.append(0)
                         root_feature_node_features = self.get_data_features(sample_json[0])
                         node_type.append(1)
-                        img_features = self.get_image_features(sample_json[0])
-                        comment_node_features, comment_feature_node_features = \
-                            self.prepare_comment_features(sample_json, sample_json[0]['mid'])
-                        node_type.extend([2] * len(comment_node_features))
-                        node_type.extend([3] * len(comment_node_features))
-                        node_count = 0
-                        source_nodes_data_profile_to_data.append(1)
-                        target_nodes_data_profile_to_data.append(0)
-                        for i in range(2, len(comment_node_features) + 2):
-                            source_nodes_comment_to_data.append(i)
-                            target_nodes_comment_to_data.append(0)
-                            source_nodes_comment_to_data.append(0)
-                            target_nodes_comment_to_data.append(i)
-                        node_count = node_count + 2 + len(comment_node_features)
-                        for i in range(0, len(comment_node_features)):
-                            source_nodes_comment_profile_to_comment.append(node_count + i)
-                            target_nodes_comment_profile_to_comment.append(2 + i)
+                        # img_features = self.get_image_features(sample_json[0])
+                        comment_tree = self.prepare_comment_features(sample_json)
 
+                        current_node_group = comment_tree
                         node_features = [root_node_features, root_feature_node_features]
-                        node_features.extend(comment_node_features)
-                        node_features.extend(comment_feature_node_features)
+                        is_top = True
+                        parent_comment_node_idx = -1
+                        while (len(node_type) - 1) / 2 <= self.max_comment_num:
+                            if len(current_node_group) == 0:
+                                break
+                            idx = randint(0, len(current_node_group) - 1)
+                            node_features.append(current_node_group[idx].comment.comment_text)
+                            node_type.append(2)
+                            node_features.append(current_node_group[idx].comment.comment_feature)
+                            node_type.append(3)
+                            source_nodes_comment_profile_to_comment.append(len(node_type) - 1)
+                            target_nodes_comment_profile_to_comment.append(len(node_type) - 2)
+                            source_nodes_comment_to_data.append(len(node_type) - 2)
+                            target_nodes_comment_to_data.append(0)
+                            source_nodes_data_to_comment.append(0)
+                            target_nodes_data_to_comment.append(len(node_type) - 2)
+                            if not is_top:
+                                source_nodes_comment_to_comment.append(len(node_type) - 2)
+                                target_nodes_comment_to_comment.append(parent_comment_node_idx)
+                                target_nodes_comment_to_comment.append(len(node_type) - 2)
+                                source_nodes_comment_to_comment.append(parent_comment_node_idx)
+                            prob = random()
+                            if prob > self.restart_prob:
+                                current_node_group = comment_tree
+                                is_top = True
+                            else:
+                                current_node_group = current_node_group[idx].children
+                                if len(current_node_group) == 0:
+                                    current_node_group = comment_tree
+                                    is_top = True
+                                else:
+                                    is_top = False
+                                    parent_comment_node_idx = len(node_type) - 2
+
                         node_features = torch.LongTensor(node_features)
                         data = Data(x=node_features,
                                     node_type=torch.LongTensor(node_type),
@@ -271,22 +350,27 @@ class WeiboGraphDataset(InMemoryDataset):
                                     edge_index_comment_to_data=
                                     torch.LongTensor([source_nodes_comment_to_data,
                                                       target_nodes_comment_to_data]),
+                                    edge_index_data_to_comment=
+                                    torch.LongTensor([source_nodes_data_to_comment,
+                                                      target_nodes_data_to_comment]),
                                     edge_index_data_profile_to_data=
                                     torch.LongTensor([source_nodes_data_profile_to_data,
                                                       target_nodes_data_profile_to_data]),
-                                    y=torch.LongTensor([sample_label]),
-                                    img_features=img_features)
+                                    edge_index_comment_to_comment=
+                                    torch.LongTensor([source_nodes_comment_to_comment,
+                                                      target_nodes_comment_to_comment]),
+                                    y=torch.LongTensor([sample_label]))
+                        # img_features=img_features)
                         data_list.append(data)
                 except BaseException:
-                    sample = all_samples.readline()
                     continue
 
-                sample = all_samples.readline()
-
+        print(f"data length : {len(data_list)}")
         data, slices = self.collate(data_list)
         torch.save((data, slices), self.processed_paths[0])
+        # return data, slices
 
-    def get(self, idx):
+    def get_back(self, idx):
         data = self.data.__class__()
 
         if hasattr(self.data, '__num_nodes__'):
@@ -301,8 +385,9 @@ class WeiboGraphDataset(InMemoryDataset):
         if data.node_type.view(-1).shape[0] > self.max_comment_num * 2 + 2:
             comment_num = int((data.node_type.view(-1).shape[0] - 2) / 2)
             selected_comment = random.sample(range(2, comment_num + 2), self.max_comment_num)
-            selected_node = selected_comment + [i + comment_num for i in selected_comment]
-            selected_node.extend([0, 1])
+            selected_node = [0, 1]
+            selected_node.extend(selected_comment)
+            selected_node.extend([i + comment_num for i in selected_comment])
             data.x = torch.index_select(input=data.x, index=torch.tensor(selected_node), dim=0)
 
             def reconstruect_edge(max_comment_num):
@@ -310,12 +395,14 @@ class WeiboGraphDataset(InMemoryDataset):
                 target_nodes_comment_profile_to_comment = []
                 source_nodes_comment_to_data = []
                 target_nodes_comment_to_data = []
+                source_nodes_data_to_comment = []
+                target_nodes_data_to_comment = []
 
                 for i in range(2, max_comment_num + 2):
                     source_nodes_comment_to_data.append(i)
                     target_nodes_comment_to_data.append(0)
-                    source_nodes_comment_to_data.append(0)
-                    target_nodes_comment_to_data.append(i)
+                    source_nodes_data_to_comment.append(0)
+                    target_nodes_data_to_comment.append(i)
                 node_count = 2 + max_comment_num
                 for i in range(0, max_comment_num):
                     source_nodes_comment_profile_to_comment.append(node_count + i)
@@ -323,9 +410,11 @@ class WeiboGraphDataset(InMemoryDataset):
                 return (torch.LongTensor([source_nodes_comment_to_data,
                                           target_nodes_comment_to_data]),
                         torch.LongTensor([source_nodes_comment_profile_to_comment,
-                                          target_nodes_comment_profile_to_comment]))
+                                          target_nodes_comment_profile_to_comment]),
+                        torch.LongTensor([source_nodes_data_to_comment,
+                                          target_nodes_data_to_comment]))
 
-            data.edge_index_comment_to_data, data.edge_index_comment_profile_to_comment = \
+            data.edge_index_comment_to_data, data.edge_index_comment_profile_to_comment, data.edge_index_data_to_comment = \
                 reconstruect_edge(self.max_comment_num)
             data.node_type = [0, 1]
             data.node_type.extend([2] * self.max_comment_num)
@@ -336,6 +425,12 @@ class WeiboGraphDataset(InMemoryDataset):
 
 if __name__ == '__main__':
     from model.util import *
-    vectors, iw, wi, dim = read_vectors('/sdd/yujunshuai/model/chinese_pretrain_vector/sgns.weibo.word')
-    dataset = WeiboGraphDataset('/sdd/yujunshuai/data/weibo/', wi)
+
+    BERT_PATH = '/sdd/yujunshuai/model/chinese_L-12_H-768_A-12'
+    weight = torch.load('/sdd/yujunshuai/model/chinese_pretrain_vector/sgns.weibo.word.vectors.pt')
+    w2id = torch.load('/sdd/yujunshuai/model/chinese_pretrain_vector/sgns.weibo.word.vocab.pt')
+    tokenizer = BertTokenizer.from_pretrained(BERT_PATH)
+    dataset = WeiboGraphDataset('/sdd/yujunshuai/data/weibo/', w2id, max_comment_num=10, restart_prob=0.6, delay=1000,
+                                tokenizer=tokenizer)
+    print(len(dataset))
     print(dataset[0])

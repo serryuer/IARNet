@@ -15,7 +15,7 @@ from data_utils.WeiboGraphDataset import WeiboGraphDataset
 from model.GEAR import GEAR
 from model.MultiModalHAN import MultiModalHANClassification
 from trainer import Train
-from model.util import load_parallel_save_model
+from model.util import load_parallel_save_model, read_vectors
 import numpy as np
 
 # log format
@@ -29,7 +29,7 @@ logging.basicConfig(level=logging.DEBUG, format=C_LogFormat)
 
 BERT_PATH = '/sdd/yujunshuai/model/chinese_L-12_H-768_A-12'
 
-BATCH_SIZE_PER_GPU = 15
+BATCH_SIZE_PER_GPU = 10
 GPU_COUNT = torch.cuda.device_count()
 
 seed = 1024
@@ -49,10 +49,13 @@ def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_st
 
 
 if __name__ == '__main__':
+    weight = torch.load('/sdd/yujunshuai/model/chinese_pretrain_vector/sgns.weibo.word.vectors.pt')
+    w2id = torch.load('/sdd/yujunshuai/model/chinese_pretrain_vector/sgns.weibo.word.vocab.pt')
+
     dataset = WeiboGraphDataset('/sdd/yujunshuai/data/weibo/',
-                                bert_path=BERT_PATH,
+                                w2id=w2id,
                                 data_max_sequence_length=256,
-                                commen_max_sequence_length=256,
+                                comment_max_sequence_length=256,
                                 max_comment_num=50)
 
     train_size = int(0.9 * len(dataset))
@@ -64,7 +67,7 @@ if __name__ == '__main__':
 
     logging.debug(f"train data all steps: {len(train_loader)}, validate data all steps : {len(val_loader)}")
 
-    model = MultiModalHANClassification(num_class=2, bert_path=BERT_PATH)
+    model = MultiModalHANClassification(num_class=2, pretrained_weight=weight)
     # model = load_parallel_save_model(
     #     '/sdd/yujunshuai/save_model/weibo_multimodal_han/weibo_multimodal_han-0-0.4127604166666667.pt', model)
     model = DataParallel(model)
@@ -91,7 +94,7 @@ if __name__ == '__main__':
                     loss_fn=crit,
                     epochs=100,
                     print_step=1,
-                    early_stop_patience=3,
+                    early_stop_patience=10,
                     save_model_path='/sdd/yujunshuai/save_model/weibo_multimodal_han',
                     save_model_every_epoch=True,
                     metric=accuracy_score,

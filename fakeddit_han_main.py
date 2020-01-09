@@ -2,13 +2,12 @@ import logging
 
 import torch
 from sklearn.metrics import *
-from torch.optim.lr_scheduler import LambdaLR
 from torch_geometric.data import DataListLoader
 from torch_geometric.nn import DataParallel
 from transformers import AdamW
 
 from data_utils.FakedditGraphDataset import FakedditGraphDataset
-from model.GEAR import GEAR
+from model.HAN import HANForFakedditClassification
 from trainer import Train
 
 # log format
@@ -20,20 +19,10 @@ logging.basicConfig(level=logging.INFO, format=C_LogFormat)
 # os.environ['CUDA_VISIBLE_DEVICES'] = '0,3,5,6,7'
 # os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2,3,4,5,6,7'
 
-BERT_PATH = '/sdd/yujunshuai/model/bert-base-uncased_L-24_H-1024_A-16'
+BERT_PATH = '/home/tanghengzhu/yjs/model/bert-base-uncased_L-24_H-1024_A-16'
 
-BATCH_SIZE_PER_GPU = 3
+BATCH_SIZE_PER_GPU = 10
 GPU_COUNT = torch.cuda.device_count()
-
-
-def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_steps, last_epoch=-1):
-    def lr_lambda(current_step):
-        if current_step < num_warmup_steps:
-            return float(current_step) / float(max(1, num_warmup_steps))
-        return max(0.0, float(num_training_steps - current_step) / float(max(1, num_training_steps - num_warmup_steps)))
-
-    return LambdaLR(optimizer, lr_lambda, last_epoch)
-
 
 if __name__ == '__main__':
     w2id = torch.load('/home/tanghengzhu/yjs/model/en_glove_vector/glove.42B.300d.w2id.pt')
@@ -57,12 +46,12 @@ if __name__ == '__main__':
     test_loader = DataListLoader(test_dataset, batch_size=int(BATCH_SIZE_PER_GPU * GPU_COUNT * 15), shuffle=True)
     val_loader = DataListLoader(val_dataset, batch_size=int(BATCH_SIZE_PER_GPU * GPU_COUNT * 15), shuffle=True)
 
-    logging.debug(f"train data all steps: {len(train_loader)}, "
-                  f"validate data all steps : {len(val_loader)},"
-                  f"test data all steps : {len(test_loader)}")
+    logging.info(f"train data all steps: {len(train_loader)}, "
+                 f"validate data all steps : {len(val_loader)},"
+                 f"test data all steps : {len(test_loader)}")
 
-    model = GEAR(num_class=2, bert_path=BERT_PATH)
-    # model = load_parallel_save_model('/sdd/yujunshuai/save_model/gear/best-validate-model.pt', model)
+    model = HANForFakedditClassification(num_class=2, dropout=0.3, pretrained_weight=weight)
+    # model = load_parallel_save_model('/home/tanghengzhu/yjs/save_model/gear/best-validate-model.pt', model)
     model = DataParallel(model)
 
     model = model.cuda(0)
@@ -78,7 +67,7 @@ if __name__ == '__main__':
     optimizer = AdamW(optimizer_grouped_parameters, lr=2e-5, eps=1e-8)
     crit = torch.nn.CrossEntropyLoss()
 
-    trainer = Train(model_name='gear-from-zero',
+    trainer = Train(model_name='fakeddit_han',
                     train_loader=train_loader,
                     val_loader=val_loader,
                     test_loader=test_loader,
@@ -88,11 +77,11 @@ if __name__ == '__main__':
                     epochs=10,
                     print_step=10,
                     early_stop_patience=3,
-                    save_model_path='/sdd/yujunshuai/save_model/gear',
+                    save_model_path='/home/tanghengzhu/yjs/save_model/fakeddit_han',
                     save_model_every_epoch=True,
                     metric=accuracy_score,
                     num_class=2,
-                    tensorboard_path='/sdd/yujunshuai/tensorboard_log')
+                    tensorboard_path='./tensorboard_log')
 
     trainer.train()
     print(f"Testing result :{trainer.test()}")
