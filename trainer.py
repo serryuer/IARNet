@@ -79,7 +79,7 @@ class Train(object):
                 if preds is None:
                     preds = logits.detach().cpu().numpy()
                     if self.model_name.startswith('gear') or self.model_name.startswith(
-                            'weibo') or self.model_name.startswith('fakeddit_han'):
+                            'weibo') or self.model_name.startswith('tw'):
                         true_labels = torch.stack([data.y for data in batch_data], dim=0). \
                             squeeze(-1).detach().cpu().numpy()
                     elif self.model_name.startswith('pure-bert'):
@@ -95,7 +95,7 @@ class Train(object):
                 else:
                     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
                     if self.model_name.startswith('gear') or self.model_name.startswith(
-                            'weibo') or self.model_name.startswith('fakeddit_han'):
+                            'weibo') or self.model_name.startswith('tw'):
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0) \
                                                 .squeeze(-1).detach().cpu().numpy(), axis=0)
                     elif self.model_name.startswith('pure-bert'):
@@ -136,7 +136,7 @@ class Train(object):
                 if preds is None:
                     preds = logits.detach().cpu().numpy()
                     if self.model_name.startswith('gear') or self.model_name.startswith(
-                            'weibo') or self.model_name.startswith('fakeddit_han'):
+                            'weibo') or self.model_name.startswith('tw'):
                         true_labels = torch.stack([data.y for data in batch_data], dim=0). \
                             squeeze(-1).detach().cpu().numpy()
                     elif self.model_name.startswith('pure-bert'):
@@ -153,7 +153,7 @@ class Train(object):
                 else:
                     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
                     if self.model_name.startswith('gear') or self.model_name.startswith(
-                            'weibo') or self.model_name.startswith('fakeddit_han'):
+                            'weibo') or self.model_name.startswith('tw'):
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0). \
                                                 squeeze(-1).detach().cpu().numpy(), axis=0)
                     elif self.model_name.startswith('pure-bert'):
@@ -179,9 +179,9 @@ class Train(object):
                                               accuracy_score(true_labels, pred_label),
                                               batch_count + epoch * len(self.train_loader))
                     self.tb_writer.add_scalar(f'{self.model_name}-scalar/train_recall',
-                                              recall_score(true_labels, pred_label),
+                                              recall_score(true_labels, pred_label, average='macro'),
                                               batch_count + epoch * len(self.train_loader))
-                    self.tb_writer.add_scalar(f'{self.model_name}-scalar/train_f1', f1_score(true_labels, pred_label),
+                    self.tb_writer.add_scalar(f'{self.model_name}-scalar/train_f1', f1_score(true_labels, pred_label, average='macro'),
                                               batch_count + epoch * len(self.train_loader))
 
             val_score = self.eval()
@@ -213,7 +213,7 @@ class Train(object):
                 if preds is None:
                     preds = logits.detach().cpu().numpy()
                     if self.model_name.startswith('gear') or self.model_name.startswith(
-                            'weibo') or self.model_name.startswith('fakeddit_han'):
+                            'weibo') or self.model_name.startswith('tw'):
                         true_labels = torch.stack([data.y for data in batch_data], dim=0). \
                             squeeze(-1).detach().cpu().numpy()
                     elif self.model_name.startswith('pure-bert'):
@@ -229,7 +229,7 @@ class Train(object):
                 else:
                     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
                     if self.model_name.startswith('gear') or self.model_name.startswith(
-                            'weibo') or self.model_name.startswith('fakeddit_han'):
+                            'weibo') or self.model_name.startswith('tw'):
                         true_labels = np.append(true_labels, torch.stack([data.y for data in batch_data], dim=0) \
                                                 .squeeze(-1).detach().cpu().numpy(), axis=0)
                     elif self.model_name.startswith('pure-bert'):
@@ -244,10 +244,10 @@ class Train(object):
         preds = np.argmax(preds, axis=1)
         result = {}
         result['accuracy'] = accuracy_score(true_labels, preds)
-        result['precision'] = precision_score(true_labels, preds, average=None)
-        result['recall'] = recall_score(true_labels, preds, average=None)
-        result['f1'] = f1_score(true_labels, preds, average=None)
-        with open('test_result.txt', mode='a', encoding='utf-8') as f:
+        result['precision'] = precision_score(true_labels, preds, average='macro')
+        result['recall'] = recall_score(true_labels, preds, average='macro')
+        result['f1'] = f1_score(true_labels, preds, average='macro')
+        with open(f"{self.model_name[:self.model_name.find('_') + 1]}test_result.txt", mode='a', encoding='utf-8') as f:
             f.write(self.model_name + '\n')
             f.write(str(result) + '\n')
             f.write('\n')

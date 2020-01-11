@@ -8,9 +8,10 @@ from torch_geometric.nn import DataParallel
 from transformers import AdamW, BertTokenizer
 
 from data_utils.FakedditGraphDataset import FakedditGraphDataset
+from data_utils.TWGraphDataset import TWGraphDataset
 from data_utils.WeiboGraphDataset import WeiboGraphDataset
 from model.util import load_parallel_save_model
-from model.HAN import HANForWeiboClassification
+from model.HAN import HANForWeiboClassification, HANForTWClassification
 from trainer import Train
 
 # log format
@@ -22,7 +23,7 @@ logging.basicConfig(level=logging.INFO, format=C_LogFormat)
 # os.environ['CUDA_VISIBLE_DEVICES'] = '0,3,5,6,7'
 # os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2,3,4,5,6,7'
 
-BERT_PATH = '/sdd/yujunshuai/model/chinese_L-12_H-768_A-12'
+BERT_PATH = '/sdd/yujunshuai/model/bert-base-uncased_L-24_H-1024_A-16'
 
 # BATCH_SIZE_PER_GPU = 1
 GPU_COUNT = torch.cuda.device_count()
@@ -33,163 +34,148 @@ torch.manual_seed(seed)
 torch.cuda.manual_seed(seed)
 
 if __name__ == '__main__':
-    weight = torch.load('/sdd/yujunshuai/model/chinese_pretrain_vector/sgns.weibo.word.vectors.pt')
-    w2id = torch.load('/sdd/yujunshuai/model/chinese_pretrain_vector/sgns.weibo.word.vocab.pt')
-    # weight = torch.load('/home/tanghengzhu/yjs/model/chinese_pretrain_vector/sgns.weibo.word.vectors.pt')
-    # w2id = torch.load('/home/tanghengzhu/yjs/model/chinese_pretrain_vector/sgns.weibo.word.vocab.pt')
 
     param_group = [
         # main experiments with bert
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_1_withbert',
-         'max_comment_num': 10,
-         'restart_prob': 0.6,
-         'delay': 1000,
-         'edge_mask': [1, 1, 1, 1, 1],
-         'use_bert': True,
-         'layer': 1,
-         'batch_size': 15},
-        # {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_2_withbert',
+        # {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1000_layer_1_withbert',
         #  'max_comment_num': 10,
         #  'restart_prob': 0.6,
         #  'delay': 1000,
         #  'edge_mask': [1, 1, 1, 1, 1],
         #  'use_bert': True,
-        #  'layer': 2,
-        #  'batch_size': 10},
-        # {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_3_withbert',
-        #  'max_comment_num': 10,
+        #  'layer': 1,
+        #  'batch_size': 1},
+        # {'model_name': 'tw16_han_comments_20_prob_0.6_delay_1000_layer_1_withbert',
+        #  'max_comment_num': 20,
         #  'restart_prob': 0.6,
         #  'delay': 1000,
         #  'edge_mask': [1, 1, 1, 1, 1],
         #  'use_bert': True,
-        #  'layer': 3,
-        #  'batch_size': 5},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_1_withbert_finetune',
-         'max_comment_num': 10,
+        #  'layer': 1,
+        #  'batch_size': 1},
+        {'model_name': 'tw16_han_comments_30_prob_0.6_delay_1000_layer_1_withbert',
+         'max_comment_num': 30,
          'restart_prob': 0.6,
          'delay': 1000,
          'edge_mask': [1, 1, 1, 1, 1],
          'use_bert': True,
          'layer': 1,
-         'batch_size': 1,
-         'fine_tune': True},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_2_withbert_finetune',
-         'max_comment_num': 10,
+         'batch_size': 1},
+        {'model_name': 'tw16_han_comments_40_prob_0.6_delay_1000_layer_2_withbert',
+         'max_comment_num': 40,
          'restart_prob': 0.6,
          'delay': 1000,
          'edge_mask': [1, 1, 1, 1, 1],
          'use_bert': True,
          'layer': 2,
-         'batch_size': 1,
-         'fine_tune': True},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_3_withbert_finetune',
-         'max_comment_num': 10,
+         'batch_size': 1},
+        {'model_name': 'tw16_han_comments_50_prob_0.6_delay_1000_layer_2_withbert',
+         'max_comment_num': 50,
          'restart_prob': 0.6,
          'delay': 1000,
          'edge_mask': [1, 1, 1, 1, 1],
          'use_bert': True,
-         'layer': 3,
-         'batch_size': 1,
-         'fine_tune': True},
+         'layer': 2,
+         'batch_size': 1},
 
         # main experiments without bert
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_1_withoutbert',
-         'max_comment_num': 10,
-         'restart_prob': 0.6,
-         'delay': 1000,
-         'edge_mask': [1, 1, 1, 1, 1],
-         'use_bert': False,
-         'layer': 1,
-         'batch_size': 10},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_2_withoutbert',
-         'max_comment_num': 10,
-         'restart_prob': 0.6,
-         'delay': 1000,
-         'edge_mask': [1, 1, 1, 1, 1],
-         'use_bert': False,
-         'layer': 2,
-         'batch_size': 5},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_3_withoutbert',
-         'max_comment_num': 10,
-         'restart_prob': 0.6,
-         'delay': 1000,
-         'edge_mask': [1, 1, 1, 1, 1],
-         'use_bert': False,
-         'layer': 3,
-         'batch_size': 2},
+        # {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1000_layer_1_withoutbert',
+        #  'max_comment_num': 10,
+        #  'restart_prob': 0.6,
+        #  'delay': 1000,
+        #  'edge_mask': [1, 1, 1, 1, 1],
+        #  'use_bert': False,
+        #  'layer': 1,
+        #  'batch_size': 10},
+        # {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1000_layer_2_withoutbert',
+        #  'max_comment_num': 10,
+        #  'restart_prob': 0.6,
+        #  'delay': 1000,
+        #  'edge_mask': [1, 1, 1, 1, 1],
+        #  'use_bert': False,
+        #  'layer': 2,
+        #  'batch_size': 5},
+        # {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1000_layer_3_withoutbert',
+        #  'max_comment_num': 10,
+        #  'restart_prob': 0.6,
+        #  'delay': 1000,
+        #  'edge_mask': [1, 1, 1, 1, 1],
+        #  'use_bert': False,
+        #  'layer': 3,
+        #  'batch_size': 2},
 
         # ablation study
         # without cs
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_1_withoutbert_without_cs',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1000_layer_1_withbert_without_cs',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 1000,
          'edge_mask': [0, 1, 1, 1, 1],
-         'use_bert': False,
+         'use_bert': True,
          'layer': 1,
-         'batch_size': 10},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_2_withoutbert_without_cs',
+         'batch_size': 3},
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1000_layer_2_withbert_without_cs',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 1000,
          'edge_mask': [1, 0, 1, 1, 1],
-         'use_bert': False,
+         'use_bert': True,
          'layer': 2,
-         'batch_size': 5},
+         'batch_size': 3},
         # without sc
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_1_withoutbert_without_sc',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1000_layer_1_withbert_without_sc',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 1000,
          'edge_mask': [1, 0, 1, 1, 1],
-         'use_bert': False,
+         'use_bert': True,
          'layer': 1,
-         'batch_size': 10},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_2_withoutbert_without_sc',
+         'batch_size': 3},
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1000_layer_2_withbert_without_sc',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 1000,
          'edge_mask': [1, 0, 1, 1, 1],
-         'use_bert': False,
+         'use_bert': True,
          'layer': 2,
-         'batch_size': 5},
+         'batch_size': 1},
         # without cc
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_1_withoutbert_without_cc',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1000_layer_1_withbert_without_cc',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 1000,
          'edge_mask': [1, 1, 0, 1, 1],
-         'use_bert': False,
+         'use_bert': True,
          'layer': 1,
-         'batch_size': 10},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_2_withoutbert_without_cc',
+         'batch_size': 1},
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1000_layer_2_withbert_without_cc',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 1000,
          'edge_mask': [1, 1, 0, 1, 1],
-         'use_bert': False,
+         'use_bert': True,
          'layer': 2,
-         'batch_size': 5},
+         'batch_size': 1},
         # without uc
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_1_withoutbert_without_uc',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1000_layer_1_withbert_without_uc',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 1000,
          'edge_mask': [1, 1, 1, 0, 1],
-         'use_bert': False,
+         'use_bert': True,
          'layer': 1,
          'batch_size': 10},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1000_layer_2_withoutbert_without_uc',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1000_layer_2_withbert_without_uc',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 1000,
          'edge_mask': [1, 1, 1, 0, 1],
-         'use_bert': False,
+         'use_bert': True,
          'layer': 2,
          'batch_size': 5},
 
         # early detection
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1_layer_1_withoutbert',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1_layer_1_withoutbert',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 1,
@@ -197,7 +183,7 @@ if __name__ == '__main__':
          'use_bert': False,
          'layer': 1,
          'batch_size': 10},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_1_layer_2_withoutbert',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_1_layer_2_withoutbert',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 1,
@@ -205,7 +191,7 @@ if __name__ == '__main__':
          'use_bert': False,
          'layer': 2,
          'batch_size': 5},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_4_layer_1_withoutbert',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_4_layer_1_withoutbert',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 4,
@@ -213,7 +199,7 @@ if __name__ == '__main__':
          'use_bert': False,
          'layer': 1,
          'batch_size': 10},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_4_layer_2_withoutbert',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_4_layer_2_withoutbert',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 4,
@@ -221,7 +207,7 @@ if __name__ == '__main__':
          'use_bert': False,
          'layer': 2,
          'batch_size': 5},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_8_layer_1_withoutbert',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_8_layer_1_withoutbert',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 8,
@@ -229,7 +215,7 @@ if __name__ == '__main__':
          'use_bert': False,
          'layer': 1,
          'batch_size': 10},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_8_layer_2_withoutbert',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_8_layer_2_withoutbert',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 8,
@@ -237,7 +223,7 @@ if __name__ == '__main__':
          'use_bert': False,
          'layer': 2,
          'batch_size': 5},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_12_layer_1_withoutbert',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_12_layer_1_withoutbert',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 12,
@@ -245,7 +231,7 @@ if __name__ == '__main__':
          'use_bert': False,
          'layer': 1,
          'batch_size': 10},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_12_layer_2_withoutbert',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_12_layer_2_withoutbert',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 12,
@@ -253,7 +239,7 @@ if __name__ == '__main__':
          'use_bert': False,
          'layer': 2,
          'batch_size': 5},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_24_layer_1_withoutbert',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_24_layer_1_withoutbert',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 24,
@@ -261,7 +247,7 @@ if __name__ == '__main__':
          'use_bert': False,
          'layer': 1,
          'batch_size': 10},
-        {'model_name': 'weibo_han_comments_10_prob_0.6_delay_24_layer_2_withoutbert',
+        {'model_name': 'tw16_han_comments_10_prob_0.6_delay_24_layer_2_withoutbert',
          'max_comment_num': 10,
          'restart_prob': 0.6,
          'delay': 24,
@@ -272,18 +258,18 @@ if __name__ == '__main__':
     ]
 
     for params in param_group:
-        for step in range(3):
+        for step in range(2):
             if params.get('use_bert', False):
                 tokenizer = BertTokenizer.from_pretrained(BERT_PATH)
             else:
                 tokenizer = None
             model_name = params['model_name'] + '_step_' + str(step)
             BATCH_SIZE_PER_GPU = params['batch_size']
-            dataset = WeiboGraphDataset('/sdd/yujunshuai/data/weibo/', w2id=w2id,
-                                        max_comment_num=params['max_comment_num'],
-                                        restart_prob=params['restart_prob'], delay=params['delay'], tokenizer=tokenizer,
-                                        step=step)
-            # dataset = WeiboGraphDataset('/home/tanghengzhu/yjs/data/weibo/', w2id=w2id, max_comment_num=params['max_comment_num'],
+            dataset = TWGraphDataset('/sdd/yujunshuai/data/twitter_15_16/twitter16/', tw_name='tw16',
+                                     max_comment_num=params['max_comment_num'],
+                                     restart_prob=params['restart_prob'], delay=params['delay'], tokenizer=tokenizer,
+                                     step=step)
+            # dataset = WeiboGraphDataset('/home/tanghengzhu/yjs/data/tw16/', w2id=w2id, max_comment_num=params['max_comment_num'],
             #                             restart_prob=params['restart_prob'], delay=params['delay'])
             train_size = int(0.675 * len(dataset))
             dev_size = int(0.225 * len(dataset))
@@ -300,14 +286,14 @@ if __name__ == '__main__':
                          f"validate data all steps : {len(val_loader)}, "
                          f"test data all steps : {len(test_loader)}")
 
-            model = HANForWeiboClassification(num_class=2, dropout=0.3, pretrained_weight=weight, use_image=False,
-                                              edge_mask=params['edge_mask'], use_bert=params.get('use_bert', False),
-                                              bert_path=BERT_PATH, finetune_bert=params.get('fine_tune', False),
-                                              layer=params.get('layer', 1))
+            model = HANForTWClassification(num_class=4, dropout=0.3, pretrained_weight=None, use_image=False,
+                                           edge_mask=params['edge_mask'], use_bert=params.get('use_bert', False),
+                                           bert_path=BERT_PATH, finetune_bert=params.get('fine_tune', False),
+                                           layer=params.get('layer', 1))
             # model = load_parallel_save_model('/sdd/yujunshuai/save_model/gear/best-validate-model.pt', model)
-            model = DataParallel(model)
+            model = DataParallel(model, output_device=1)
 
-            model = model.cuda(0)
+            model = model.cuda()
 
             # Prepare  optimizer and schedule(linear warmup and decay)
             no_decay = ['bias', 'LayerNorm.weight']
@@ -328,14 +314,14 @@ if __name__ == '__main__':
                             model=model,
                             optimizer=optimizer,
                             loss_fn=crit,
-                            epochs=12,
+                            epochs=120,
                             print_step=1,
-                            early_stop_patience=3,
+                            early_stop_patience=5,
                             # save_model_path=f"./save_model/{params['model_name']}",
                             save_model_path=f"/sdd/yujunshuai/save_model/{model_name}",
                             save_model_every_epoch=False,
                             metric=accuracy_score,
-                            num_class=2,
+                            num_class=4,
                             # tensorboard_path='./tensorboard_log')
                             tensorboard_path='/sdd/yujunshuai/tensorboard_log')
             print(trainer.train())

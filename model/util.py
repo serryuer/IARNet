@@ -54,10 +54,7 @@ def read_vectors(path):  # read top n word vectors, i.e. top is 10000
 
 
 if __name__ == '__main__':
-    vectors, iw, wi, dim = read_vectors('/sdd/yujunshuai/model/en_glove_vector/glove.42B.300d.txt')
-    embed = torch.nn.Embedding(195203, 300)
+    vectors, iw, wi, dim = read_vectors('/sdd/yujunshuai/model/en_glove_vector/glove.twitter.27B.200d.txt')
     weight = torch.from_numpy(np.stack(list(vectors.values())))
-    torch.save(weight, 'pretrained_weight.pt')
-    torch.save(wi, 'vocab.pt')
-    embed.weight.data.copy_(weight)
-    print(embed)
+    torch.save(weight, 'glove.twitter.27B.200d.weight.pt')
+    torch.save(wi, 'glove.twitter.27B.200d.vocab.pt')

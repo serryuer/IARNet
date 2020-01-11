@@ -6,7 +6,7 @@ wb_y = {
     "GLAN": [0.938, 0.947, 0.942, 0.937, 0.939],
     "GRU-RNN": [0.759, 0.820, 0.847, 0.873, 0.907],
     "DTR": [0.690, 0.708, 0.715, 0.736, 0.790],
-    "HGAT": [0.945, 0.948, 0.958, 0.962, 0.968]
+    "HGAT-Glove": [0.949, 0.949125, 0.9525, 0.9581, 0.9630]
 }
 
 tw15_y = {
@@ -15,7 +15,7 @@ tw15_y = {
     "GRU-RNN": [0.410, 0.518, 0.523, 0.594, 0.596],
     "DTR": [0.350, 0.412, 0.387, 0.375, 0.298],
     "PPC": [0.835, 0.835, 0.836, 0.835, 0.836],
-    "HGAT": [0.915, 0.918, 0.928, 0.922, 0.928]
+    "HGAT-Glove": [0.915, 0.918, 0.928, 0.922, 0.928]
 }
 tw16_y = {
     "PPC": [0.858, 0.859, 0.858, 0.858, 0.860],
@@ -23,7 +23,7 @@ tw16_y = {
     "GRU-RNN": [0.400, 0.445, 0.528, 0.594, 0.587],
     "DTR": [0.400, 0.429, 0.409, 0.403, 0.4082],
     "RvNN": [0.42, 0.53, 0.617, 0.653, 0.689],
-    "HGAT": [0.915, 0.918, 0.928, 0.922, 0.925]
+    "HGAT-Glove": [0.915, 0.918, 0.928, 0.922, 0.925]
 }
 y = [wb_y, tw15_y, tw16_y]
 
@@ -32,14 +32,14 @@ colors = {
     "GLAN": 'brown',
     "GRU-RNN": 'greenyellow',
     "DTR": 'gold',
-    "HGAT": 'red',
+    "HGAT-Glove": 'red',
     'RvNN': 'blue'
 }
 fig, axes = plt.subplots(1, 3)
 axes[0].set_yticks([0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1])
 axes[0].set_ylim([0.65, 1.05])
 axes[1].set_yticks([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
-axes[1].set_ylim([0.4, 1.01])
+axes[1].set_ylim([0.3, 1.01])
 axes[2].set_yticks([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
 axes[2].set_ylim([0.4, 1.01])
 
@@ -47,9 +47,12 @@ for i in range(3):
     for key, spine in axes[i].spines.items():
         if key == 'right' or key == 'top':
             spine.set_visible(False)
-    axes[i].set_xticklabels(['-1', '0', '4', '8', '12', '24'])
+    axes[i].set_xticks([0, 1, 2, 3, 4])
+    axes[i].set_xticklabels(['0', '4', '8', '12', '24'])
     axes[i].set_xlabel('Detection deadline(h)')
     axes[i].set_ylabel('Accuracy')
+    axes[i].set_facecolor('#E5E5E5')
+    axes[i].grid(color='#FFFFFF')
     for key in y[i].keys():
         axes[i].plot(x, y[i][key], linestyle='dashed', marker='o', color=colors[key], label=key)
     axes[i].legend(loc='upper center', ncol=3)
