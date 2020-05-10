@@ -9,7 +9,7 @@ from transformers import AdamW, BertTokenizer
 
 from data_utils.WeiboGraphDataset import WeiboGraphDataset
 from trainer import Train
-from model.HAN import BertForWeiboClassification
+from model.IARNet import BertForWeiboClassification
 
 # log format
 C_LogFormat = '%(asctime)s - %(levelname)s - %(message)s'

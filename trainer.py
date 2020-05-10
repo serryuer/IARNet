@@ -244,9 +244,9 @@ class Train(object):
         preds = np.argmax(preds, axis=1)
         result = {}
         result['accuracy'] = accuracy_score(true_labels, preds)
-        result['precision'] = precision_score(true_labels, preds, average='macro')
-        result['recall'] = recall_score(true_labels, preds, average='macro')
-        result['f1'] = f1_score(true_labels, preds, average='macro')
+        result['precision'] = precision_score(true_labels, preds, average=None)
+        result['recall'] = recall_score(true_labels, preds, average=None)
+        result['f1'] = f1_score(true_labels, preds, average=None)
         with open(f"{self.model_name[:self.model_name.find('_') + 1]}test_result.txt", mode='a', encoding='utf-8') as f:
             f.write(self.model_name + '\n')
             f.write(str(result) + '\n')

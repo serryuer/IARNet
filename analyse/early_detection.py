@@ -57,5 +57,5 @@ for i in range(3):
         axes[i].plot(x, y[i][key], linestyle='dashed', marker='o', color=colors[key], label=key)
     axes[i].legend(loc='upper center', ncol=3)
 
-fig.show()
+plt.show()
 print()

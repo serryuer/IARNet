@@ -27,10 +27,10 @@ class SemanticAttention(nn.Module):
         return (beta * z).sum(1)
 
 
-class HANLayer(nn.Module):
+class IARNetLayer(nn.Module):
 
     def __init__(self, num_meta_paths, in_size, out_size, layer_num_heads, dropout):
-        super(HANLayer, self).__init__()
+        super(IARNetLayer, self).__init__()
 
         # One GAT layer for each meta path based adjacency matrix
         self.gat_layers = nn.ModuleList()
@@ -50,15 +50,15 @@ class HANLayer(nn.Module):
         return self.semantic_attention(semantic_embeddings)  # (N, D * K)
 
 
-class HAN(nn.Module):
+class IARNet(nn.Module):
     def __init__(self, num_meta_paths, in_size, hidden_size, out_size, num_heads, dropout):
-        super(HAN, self).__init__()
+        super(IARNet, self).__init__()
 
         self.layers = nn.ModuleList()
-        self.layers.append(HANLayer(num_meta_paths, in_size, hidden_size, num_heads[0], dropout))
+        self.layers.append(IARNetLayer(num_meta_paths, in_size, hidden_size, num_heads[0], dropout))
         for l in range(1, len(num_heads)):
-            self.layers.append(HANLayer(num_meta_paths, hidden_size * num_heads[l - 1],
-                                        hidden_size, num_heads[l], dropout))
+            self.layers.append(IARNetLayer(num_meta_paths, hidden_size * num_heads[l - 1],
+                                           hidden_size, num_heads[l], dropout))
 
     def forward(self, g, h):
         for gnn in self.layers:
@@ -67,27 +67,46 @@ class HAN(nn.Module):
         return h
 
 
-class HANForFakedditClassification(torch.nn.Module):
-    def __init__(self, num_class, dropout, pretrained_weight, hidden_size=512, use_image=False):
-        super(HANForFakedditClassification, self).__init__()
+class IARNetForFakedditClassification(torch.nn.Module):
+    def __init__(self, num_class, dropout, pretrained_weight, hidden_size=512, use_image=False, use_bert=False,
+                 bert_path=None, finetune_bert=False, layer=2, edge_mask=[1, 1]):
+        super(IARNetForFakedditClassification, self).__init__()
 
         self.num_class = num_class
 
         self.weight = pretrained_weight
-        self.vocab_size = self.weight.shape[0]
-        self.embed_size = self.weight.shape[1]
         self.hidden_size = hidden_size
-        self.word_embedding = torch.nn.Embedding(self.vocab_size, self.embed_size)
+        self.use_bert = use_bert
+        if self.use_bert:
+            self.bert = BertModel.from_pretrained(
+                pretrained_model_name_or_path=bert_path
+            )
+            self.embed_size = 768
+            self.finetune_bert = finetune_bert
+        else:
+            self.vocab_size = self.weight.shape[0]
+            self.embed_size = self.weight.shape[1]
+            self.word_embedding = torch.nn.Embedding(self.vocab_size, self.embed_size)
+            self.word_embedding.weight.data.copy_(self.weight)
         self.blstm = torch.nn.LSTM(input_size=self.embed_size,
-                                   hidden_size=self.embed_size,
+                                   hidden_size=self.hidden_size,
                                    bias=True,
                                    num_layers=2,
                                    bidirectional=True,
                                    batch_first=True,
                                    dropout=0.3)
 
-        self.num_heads = [8, 8]
-        self.han = HAN(2, self.embed_size, self.hidden_size, self.num_class, self.num_heads, dropout)
+        self.num_heads = [4] * np.sum(edge_mask)
+        self.edge_types = np.sum(edge_mask)
+        self.edge_mask = edge_mask
+        self.iar_nets = nn.ModuleList()
+
+        self.iar_nets.append(
+            IARNet(self.edge_types, self.hidden_size, self.hidden_size, self.num_class, self.num_heads, dropout))
+        for l in range(1, layer):
+            self.iar_nets.append(
+                IARNet(self.edge_types, self.hidden_size * self.num_heads[- 1], self.hidden_size, self.num_class,
+                       self.num_heads, dropout))
 
         self.use_image = use_image
         if self.use_image:
@@ -111,10 +130,18 @@ class HANForFakedditClassification(torch.nn.Module):
             torch.nn.init.xavier_uniform_(self.img_lin[3].weight)
 
     def forward(self, input):
-        node_features, comment_to_data_edge_index, data_to_comment_edge_index, batch, labels = \
-            input.x, input.comment_to_data_edge_index, input.data_to_comment_edge_index, input.batch, input.y
-
-        text_embedding = self.word_embedding(node_features[:, 0, :])
+        node_features, batch, labels = input.x, input.batch, input.y
+        edge_indexes = [input.comment_to_data_edge_index, input.data_to_comment_edge_index]
+        if self.use_bert:
+            if self.finetune_bert:
+                text_embedding = self.bert(input_ids=node_features[:, 0, :],
+                                           attention_mask=node_features[:, 1, :])[0]
+            else:
+                with torch.no_grad():
+                    text_embedding = self.bert(input_ids=node_features[:, 0, :],
+                                               attention_mask=node_features[:, 1, :])[0]
+        else:
+            text_embedding = self.word_embedding(node_features[:, 0, :])
         lengths = node_features[:, 1, :].sum(dim=-1)
         packed = torch.nn.utils.rnn.pack_padded_sequence(
             text_embedding, lengths, enforce_sorted=False, batch_first=True
@@ -123,7 +150,9 @@ class HANForFakedditClassification(torch.nn.Module):
         _, [h_n, _] = self.blstm(packed)
         node_features = h_n.mean(dim=0)
 
-        node_features = self.han([comment_to_data_edge_index, data_to_comment_edge_index], node_features)
+        for layer in self.iar_nets:
+            node_features = layer([edge_indexes[i] for i in range(len(edge_indexes)) if self.edge_mask[i] == 1],
+                                  node_features)
         mean_node = global_mean_pool(node_features, batch)
         if self.use_image:
             vgg_output = self.vgg(torch.stack(torch.split(input.img_features, 3, dim=0), dim=0))
@@ -139,10 +168,10 @@ class HANForFakedditClassification(torch.nn.Module):
         return outputs
 
 
-class HANForWeiboClassification(torch.nn.Module):
+class IARNetForWeiboClassification(torch.nn.Module):
     def __init__(self, num_class, dropout, pretrained_weight, hidden_size=512, use_image=False,
                  edge_mask=[1, 1, 1, 1, 1], layer=1, use_bert=False, bert_path=None, finetune_bert=False):
-        super(HANForWeiboClassification, self).__init__()
+        super(IARNetForWeiboClassification, self).__init__()
 
         self.num_class = num_class
 
@@ -176,14 +205,14 @@ class HANForWeiboClassification(torch.nn.Module):
         self.num_heads = [4] * np.sum(edge_mask)
         self.edge_types = np.sum(edge_mask)
         self.edge_mask = edge_mask
-        self.han = nn.ModuleList()
+        self.iar_nets = nn.ModuleList()
 
-        self.han.append(
-            HAN(self.edge_types, self.hidden_size, self.hidden_size, self.num_class, self.num_heads, dropout))
+        self.iar_nets.append(
+            IARNet(self.edge_types, self.hidden_size, self.hidden_size, self.num_class, self.num_heads, dropout))
         for l in range(1, layer):
-            self.han.append(
-                HAN(self.edge_types, self.hidden_size * self.num_heads[- 1], self.hidden_size, self.num_class,
-                    self.num_heads, dropout))
+            self.iar_nets.append(
+                IARNet(self.edge_types, self.hidden_size * self.num_heads[- 1], self.hidden_size, self.num_class,
+                       self.num_heads, dropout))
 
         self.use_image = use_image
         if self.use_image:
@@ -253,7 +282,7 @@ class HANForWeiboClassification(torch.nn.Module):
 
         node_features = torch.stack(encode_node_features, dim=0)
 
-        for layer in self.han:
+        for layer in self.iar_nets:
             node_features = layer([edge_indexes[i] for i in range(len(edge_indexes)) if self.edge_mask[i] == 1],
                                   node_features)
 
@@ -332,144 +361,6 @@ class BertForWeiboClassification(torch.nn.Module):
         classify_features = torch.stack(classify_features, dim=0)
 
         logits = self.classifier(classify_features)
-
-        outputs = (logits,)
-        loss_fct = CrossEntropyLoss()
-        loss = loss_fct(logits.view(-1, self.num_class), labels.view(-1))
-        outputs = (loss,) + outputs
-        return outputs
-
-
-class HANForTWClassification(torch.nn.Module):
-    def __init__(self, num_class, pretrained_weight, dropout, hidden_size=512, use_image=False,
-                 edge_mask=[1, 1, 1, 1, 1], layer=1, use_bert=False, bert_path=None, finetune_bert=False):
-        super(HANForTWClassification, self).__init__()
-
-        self.num_class = num_class
-
-        self.weight = pretrained_weight
-        self.hidden_size = hidden_size
-        self.use_bert = use_bert
-        if self.use_bert:
-            self.bert = BertModel.from_pretrained(
-                pretrained_model_name_or_path=bert_path
-            )
-            self.embed_size = 768
-            self.finetune_bert = finetune_bert
-        else:
-            self.vocab_size = self.weight.shape[0]
-            self.embed_size = self.weight.shape[1]
-            self.word_embedding = torch.nn.Embedding(self.vocab_size, self.embed_size)
-            self.word_embedding.weight.data.copy_(self.weight)
-
-        self.blstm = torch.nn.LSTM(input_size=self.embed_size,
-                                   hidden_size=self.hidden_size,
-                                   bias=True,
-                                   num_layers=2,
-                                   bidirectional=True,
-                                   batch_first=True,
-                                   dropout=dropout)
-        self.profile_feature_size = 156
-
-        self.comment_profile_embedding = torch.nn.Parameter(torch.Tensor(self.profile_feature_size, self.hidden_size))
-        self.data_profile_embedding = torch.nn.Parameter(torch.Tensor(self.profile_feature_size, self.hidden_size))
-
-        self.num_heads = [4] * np.sum(edge_mask)
-        self.edge_types = np.sum(edge_mask)
-        self.edge_mask = edge_mask
-        self.han = nn.ModuleList()
-
-        self.han.append(
-            HAN(self.edge_types, self.hidden_size, self.hidden_size, self.num_class, self.num_heads, dropout))
-        for l in range(1, layer):
-            self.han.append(
-                HAN(self.edge_types, self.hidden_size * self.num_heads[- 1], self.hidden_size, self.num_class,
-                    self.num_heads, dropout))
-
-        self.use_image = use_image
-        if self.use_image:
-            self.vgg = torchvision.models.vgg19_bn(pretrained=True).features
-            self.img_lin = torch.nn.Sequential(
-                torch.nn.Linear(512 * 7 * 7, 4096),
-                torch.nn.ReLU(True),
-                torch.nn.Dropout(0.4),
-                torch.nn.Linear(4096, self.hidden_size)
-            )
-            self.classifier = nn.Linear(self.hidden_size * (self.num_heads[-1] + 1), self.num_class)
-        else:
-            self.classifier = nn.Linear(self.hidden_size * self.num_heads[-1], self.num_class)
-
-        self.__init_weights__()
-
-    def __init_weights__(self):
-        torch.nn.init.xavier_uniform_(self.comment_profile_embedding)
-        torch.nn.init.xavier_uniform_(self.data_profile_embedding)
-        torch.nn.init.xavier_uniform_(self.classifier.weight)
-        if self.use_image:
-            torch.nn.init.xavier_uniform_(self.img_lin[0].weight)
-            torch.nn.init.xavier_uniform_(self.img_lin[3].weight)
-
-    def forward(self, input):
-        node_features, batch, labels = input.x, input.batch, input.y
-        # edge_index_comment_profile_to_comment = input.edge_index_comment_profile_to_comment
-        # edge_index_comment_to_data = input.edge_index_comment_to_data
-        # edge_index_data_to_comment = input.edge_index_data_to_comment
-        # edge_index_data_profile_to_data = input.edge_index_data_profile_to_data
-        # edge_index_comment_to_comment = input.edge_index_comment_to_comment
-        edge_indexes = [input.edge_index_comment_to_data, input.edge_index_data_to_comment,
-                        input.edge_index_comment_profile_to_comment, input.edge_index_comment_to_comment,
-                        input.edge_index_data_profile_to_data]
-        node_type = input.node_type
-
-        encode_node_features = []
-        for i in range(node_features.shape[0]):
-            node_feature = node_features[i]
-            if node_type[i].item() == 0 or node_type[i].item() == 2:
-
-                if self.use_bert:
-                    if self.finetune_bert:
-                        text_embedding = self.bert(input_ids=node_feature[0].unsqueeze(0),
-                                                   attention_mask=node_feature[1].unsqueeze(0),
-                                                   token_type_ids = torch.zeros_like(node_feature[1].unsqueeze(0)))[0]
-                    else:
-                        with torch.no_grad():
-                            text_embedding = self.bert(input_ids=node_feature[0].unsqueeze(0),
-                                                       attention_mask=node_feature[1].unsqueeze(0),
-                                                   token_type_ids = torch.zeros_like(node_feature[1].unsqueeze(0)))[0]
-                else:
-                    # node_features[0] : max_seq_len
-                    # text_embedding : max_seq_len, embed_size
-                    text_embedding = self.word_embedding(node_feature[0]).unsqueeze(0)
-                lengths: List[int] = [int(node_feature[1].sum().item())]
-                packed = torch.nn.utils.rnn.pack_padded_sequence(
-                    text_embedding, lengths, enforce_sorted=False, batch_first=True
-                )
-
-                _, [h_n, _] = self.blstm(packed)
-                encode_feature = h_n.mean(dim=0).squeeze(0)
-
-            elif node_type[i].item() == 1:
-                encode_feature = torch.matmul(torch.t(node_feature[0]).float(), self.data_profile_embedding)
-            else:
-                encode_feature = torch.matmul(torch.t(node_feature[0]).float(), self.comment_profile_embedding)
-            encode_node_features.append(encode_feature)
-
-        node_features = torch.stack(encode_node_features, dim=0)
-
-        for layer in self.han:
-            node_features = layer([edge_indexes[i] for i in range(len(edge_indexes)) if self.edge_mask[i] == 1],
-                                  node_features)
-
-        mean_node = global_mean_pool(node_features, batch)
-
-        if self.use_image:
-            vgg_output = self.vgg(torch.stack(torch.split(input.img_features, 3, dim=0), dim=0))
-
-            vgg_output = vgg_output.view(vgg_output.size(0), -1)
-            image_encode = self.img_lin(vgg_output)
-            mean_node = torch.cat([mean_node, image_encode], -1)
-
-        logits = self.classifier(mean_node)
 
         outputs = (logits,)
         loss_fct = CrossEntropyLoss()

@@ -18,9 +18,10 @@ class FakedditGraphDataset(InMemoryDataset):
                  isVal=False, isTest=False,
                  data_max_sequence_length=256, comment_max_sequence_length=256, max_comment_num=30,
                  min_comment_word_length=5,
-                 bert_path='/sdd/yujunshuai/model/bert-base-uncased_L-24_H-1024_A-16'):
+                 tokenizer=None,
+                 fixed_count = None):
         self.w2id = w2id
-        self.unkown_idx = len(w2id)
+        self.unkown_idx = len(w2id) - 1
         self.isTest = isTest
         self.isVal = isVal
         self.data_max_sequence_length = data_max_sequence_length
@@ -28,9 +29,10 @@ class FakedditGraphDataset(InMemoryDataset):
         self.max_comment_num = max_comment_num
         self.root = root
         self.num_class = num_class
-        self.tokenizer = BertTokenizer.from_pretrained(bert_path)
+        self.tokenizer = tokenizer
         self.min_comment_word_length = min_comment_word_length
         self.img_root = img_root
+        self.fixed_count = fixed_count
 
         normalize = T.Normalize(mean=[0.485, 0.456, 0.406],
                                 std=[0.229, 0.224, 0.225])
@@ -51,25 +53,42 @@ class FakedditGraphDataset(InMemoryDataset):
 
     @property
     def processed_file_names(self):
-        if self.isTest:
-            return ['gear_graph_test.dataset']
-        elif self.isVal:
-            return ['gear_graph_val.dataset']
+        if self.fixed_count:
+            if self.isTest:
+                return [f'gear_graph_{self.fixed_count}_test.dataset']
+            elif self.isVal:
+                return [f'gear_graph_{self.fixed_count}_val.dataset']
+            else:
+                return [f'gear_graph_{self.fixed_count}_train.dataset']
         else:
-            return ['gear_graph_train.dataset']
+            if self.isTest:
+                return [f'gear_graph_test.dataset']
+            elif self.isVal:
+                return [f'gear_graph_val.dataset']
+            else:
+                return [f'gear_graph_train.dataset']
+
 
     def download(self):
         pass
 
     def convert_sentence_to_features(self, sentence, max_sequence_length):
-        words = self.tokenizer.tokenize(sentence)
-        words = words[:max_sequence_length]
-        input_ids = []
-        for word in words:
-            if word in self.w2id:
-                input_ids.append(self.w2id[word])
-            else:
-                input_ids.append(self.unkown_idx)
+        if self.tokenizer is not None:
+            words = self.tokenizer.tokenize(sentence)
+            tokens = ['[CLS]']
+            tokens.extend(words)
+            tokens = tokens[:max_sequence_length - 1]
+            tokens.append('[SEP]')
+            input_ids = self.tokenizer.convert_tokens_to_ids(tokens)
+        else:
+            words = sentence.split(' ')
+            words = words[:max_sequence_length]
+            input_ids = []
+            for word in words:
+                if word in self.w2id:
+                    input_ids.append(self.w2id[word])
+                else:
+                    input_ids.append(self.unkown_idx)
         input_mask = [1] * len(input_ids)
 
         while len(input_ids) < max_sequence_length:
@@ -147,6 +166,10 @@ class FakedditGraphDataset(InMemoryDataset):
                 data_list.append(data)
             except BaseException:
                 continue
+
+            if self.fixed_count:
+                if len(data_list) >= self.fixed_count:
+                    break
         print(f"data length : {len(data_list)}")
 
         data, slices = self.collate(data_list)

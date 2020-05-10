@@ -1,0 +1,1351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="193b4ac6-7ab1-436f-9051-aefe621cacf1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/Fakeddit-Experiment.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/remote-mappings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/analyse/depth_analysis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fakeddit_iarnet_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/analyse/early_detection.py" beforeDir="false" afterPath="$PROJECT_DIR$/analyse/early_detection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analyse/get_error_eample.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/analyse/get_error_eample.py" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_utils/FakedditGraphDataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_utils/FakedditGraphDataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_utils/MultiModalDataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_utils/TWGraphDataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_utils/WeiboMultiModalDataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fakeddit_han_main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gear_main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gear_simple_main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mbert_main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/GAT_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/GEAR.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/HAN.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/IARNet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/MVAE.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/MulimodalBert.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/MultiModalHAN.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/PureVgg.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/SpotFake.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/prepare_tw_dataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/prepare_wb_dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/prepare_wb_dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pure_vgg_main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spotfake_main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/trainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tw15_han_main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tw16_han_main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weibo_bert_avg_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/weibo_bert_avg_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/weibo_bert_cat_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/weibo_bert_cat_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/weibo_han_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/weibo_iarnet_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/weibo_multimodal_main.py" beforeDir="false" />
+    </list>
+    <ignored path="jupyter/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$data_processing.coverage" NAME="data_processing Coverage Results" MODIFIED="1576804171807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_utils/weibo" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$FakedditGraphDataset.coverage" NAME="FakedditGraphDataset Coverage Results" MODIFIED="1577255859685" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_utils" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$tw16_han_main.coverage" NAME="tw16_han_main Coverage Results" MODIFIED="1578758361110" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$depth_analysis.coverage" NAME="depth_analysis Coverage Results" MODIFIED="1580191796126" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/analyse" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$weibo_multimodal_main.coverage" NAME="weibo_multimodal_main Coverage Results" MODIFIED="1577146505014" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$MultiModalHAN.coverage" NAME="MultiModalHAN Coverage Results" MODIFIED="1577069822768" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$WeiboDataset.coverage" NAME="WeiboDataset Coverage Results" MODIFIED="1576753761690" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_utils" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$gear_main.coverage" NAME="gear_main Coverage Results" MODIFIED="1576408946671" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$pure_bert_main.coverage" NAME="pure_bert_main Coverage Results" MODIFIED="1576485345316" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$TWDynamicGraphDataset.coverage" NAME="TWDynamicGraphDataset Coverage Results" MODIFIED="1578874843236" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_utils" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$GEAR.coverage" NAME="GEAR Coverage Results" MODIFIED="1575901598674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$spotfake_main.coverage" NAME="spotfake_main Coverage Results" MODIFIED="1576596723854" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$gear_simple_main.coverage" NAME="gear_simple_main Coverage Results" MODIFIED="1577068173741" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$early_detection.coverage" NAME="early_detection Coverage Results" MODIFIED="1578748019025" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/analyse" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$test.coverage" NAME="test Coverage Results" MODIFIED="1576655664236" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$util.coverage" NAME="util Coverage Results" MODIFIED="1578749992318" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$TWFixedGraphDataset.coverage" NAME="TWFixedGraphDataset Coverage Results" MODIFIED="1578786773279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_utils" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$FakedditDatasetWithComment.coverage" NAME="FakedditDatasetWithComment Coverage Results" MODIFIED="1576503599141" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_utils" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$weibo_bert_main.coverage" NAME="weibo_bert_main Coverage Results" MODIFIED="1578271025477" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$pure_bert_with_comment_main.coverage" NAME="pure_bert_with_comment_main Coverage Results" MODIFIED="1576505297375" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$han_main.coverage" NAME="han_main Coverage Results" MODIFIED="1577190572321" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$fakeddit_han_main.coverage" NAME="fakeddit_han_main Coverage Results" MODIFIED="1578964816561" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$weibo_han_bert_main.coverage" NAME="weibo_han_bert_main Coverage Results" MODIFIED="1578286047768" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$WeiboGraphDataset.coverage" NAME="WeiboGraphDataset Coverage Results" MODIFIED="1578192555934" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_utils" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$mbert_main.coverage" NAME="mbert_main Coverage Results" MODIFIED="1576310249191" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$MulimodalBert.coverage" NAME="MulimodalBert Coverage Results" MODIFIED="1576308624724" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$MultiModalDataset.coverage" NAME="MultiModalDataset Coverage Results" MODIFIED="1576225952433" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_utils" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$TWGraphDataset.coverage" NAME="TWGraphDataset Coverage Results" MODIFIED="1578759234929" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_utils" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$GAT_test.coverage" NAME="GAT_test Coverage Results" MODIFIED="1577175040699" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$tw15_han_main.coverage" NAME="tw15_han_main Coverage Results" MODIFIED="1578758949859" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$FakedditGEARDataset.coverage" NAME="FakedditGEARDataset Coverage Results" MODIFIED="1575879885828" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_utils" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$weibo_han_main.coverage" NAME="weibo_han_main Coverage Results" MODIFIED="1578716307829" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$TWFixedGraphDataset__1_.coverage" NAME="TWFixedGraphDataset Coverage Results" MODIFIED="1578841700405" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_utils" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$TEST.coverage" NAME="TEST Coverage Results" MODIFIED="1576769203885" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_utils/weibo/image" />
+    <SUITE FILE_PATH="coverage/Fakeddit_Experiment$run_glue.coverage" NAME="run_glue Coverage Results" MODIFIED="1575638600468" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/example" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="Fakeddit-Experiment" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/util.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-490">
+              <caret line="18" column="8" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fakeddit_iarnet_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="485">
+              <caret line="119" lean-forward="true" selection-start-line="119" selection-end-line="119" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/prepare_wb_dataset.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="550">
+              <caret line="277" column="46" lean-forward="true" selection-start-line="277" selection-start-column="46" selection-end-line="277" selection-end-column="46" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/trainer.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="234">
+              <caret line="89" column="74" lean-forward="true" selection-start-line="89" selection-start-column="74" selection-end-line="89" selection-end-column="74" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor>
+                <caret column="2" lean-forward="true" selection-start-column="2" selection-end-column="2" />
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pure_bert_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1690">
+              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pure_bert_with_comment_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/weibo_iarnet_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1090">
+              <caret line="276" column="26" selection-start-line="276" selection-start-column="26" selection-end-line="276" selection-end-column="26" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/weibo_bert_avg_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="275">
+              <caret line="11" column="17" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/weibo_bert_cat_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="275">
+              <caret line="11" column="17" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>logging.info(self.model_name + f&quot;-{epoch}&quot; + &quot;:&quot;</find>
+      <find>seq</find>
+      <find>logging.info(self.model_name + &quot;:&quot; +</find>
+      <find>logging.info</find>
+      <find>split(' ')</find>
+      <find>split(</find>
+      <find>parent</find>
+      <find>step</find>
+      <find>weibo</find>
+      <find>tw_han</find>
+      <find>source_tweet</find>
+      <find>tw</find>
+      <find>recall</find>
+      <find>source_content</find>
+      <find>error</find>
+      <find>axis</find>
+      <find>axisbg</find>
+      <find>color</find>
+      <find>get_comment_features</find>
+      <find>mean(</find>
+      <find>TWFixedGraphDataset</find>
+      <find>TW_1516_FixedGraphDataset</find>
+      <find>TWGraphDataset</find>
+      <find>TW_1516_DynamicGraphDataset</find>
+      <find>WeiboGraphDataset</find>
+      <find>tw15</find>
+      <find>TWDynamicGraphDataset.py</find>
+      <find>/home/tanghengzhu/yjs</find>
+      <find>IANet</find>
+      <find>han</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>elif self.model_name == 'pure-bert' or self.model_name == 'pure-bert-with-comment':</replace>
+      <replace>home</replace>
+      <replace>if self.model_name == 'gear'or self.model_name == 'gear-from-zero':</replace>
+      <replace>elif self.model_name.startswith('spot-fake'):</replace>
+      <replace>batch_count</replace>
+      <replace>elif  self.model_name.startswith('spot-fake') or self.model_name.startswith('pure-vgg'):</replace>
+      <replace>self.model_name.startswith('gear'):</replace>
+      <replace>self.model_name.startswith('pure-bert'):</replace>
+      <replace>batch_count + epoch * len(self.train_loader))</replace>
+      <replace>fit([</replace>
+      <replace>if self.model_name.startswith('gear') or self.model_name.startswith('weibo'):</replace>
+      <replace>/home/tanghengzhu/yjs/data</replace>
+      <replace>/home/tanghengzhu/yjs/</replace>
+      <replace>self.model_name.startswith('gear') or self.model_name.startswith('weibo') or self.model_name.startswith('fakeddit_han')</replace>
+      <replace>self.model_name.startswith('gear') or self.model_name.startswith('weibo') or self.model_name.startswith('fakeddit_han'):</replace>
+      <replace>weibo_han_comments</replace>
+      <replace>logging.info(self.model_name +</replace>
+      <replace>logging.info(self.model_name + &quot;:&quot; +</replace>
+      <replace>logging.info(self.model_name + f&quot;-{epoch}&quot; + &quot;:&quot;</replace>
+      <replace>logging.info(self.model_name + &quot;: epoch&quot; +</replace>
+      <replace>tw15</replace>
+      <replace>tw16</replace>
+      <replace>TW_1516_DynamicGraphDataset</replace>
+      <replace>TW_1516_FixedGraphDataset</replace>
+      <replace>TWFixedGraphDataset</replace>
+      <replace>tw</replace>
+      <replace>TWDynamicGraphDataset</replace>
+      <replace>/sdd/yujunshuai</replace>
+      <replace>IARNet</replace>
+      <replace>iarnet</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/data_utils/weibo/has_image_sample.txt" />
+        <option value="$PROJECT_DIR$/data_utils/TEST.py" />
+        <option value="$PROJECT_DIR$/data_utils/weibo/image/TEST.py" />
+        <option value="$PROJECT_DIR$/data_utils/weibo/data_processing.py" />
+        <option value="$PROJECT_DIR$/data_utils/weibo/test.py" />
+        <option value="$PROJECT_DIR$/data_utils/FakedditGEARSimpleDataset.py" />
+        <option value="$PROJECT_DIR$/model/GEAR-Embed.py" />
+        <option value="$PROJECT_DIR$/gear_embed_main.py" />
+        <option value="$PROJECT_DIR$/model/GAT_test.py" />
+        <option value="$PROJECT_DIR$/data_utils/FakedditGEARDataset.py" />
+        <option value="$PROJECT_DIR$/model/MulimodalBert.py" />
+        <option value="$PROJECT_DIR$/model/MulimodalBertWithComment.py" />
+        <option value="$PROJECT_DIR$/han_main.py" />
+        <option value="$PROJECT_DIR$/weibo_multimodal_main.py" />
+        <option value="$PROJECT_DIR$/model/MultiModalHAN.py" />
+        <option value="$PROJECT_DIR$/model/GEAR.py" />
+        <option value="$PROJECT_DIR$/gear_main.py" />
+        <option value="$PROJECT_DIR$/data_utils/WeiboMultiModalDataset.py" />
+        <option value="$PROJECT_DIR$/weibo_han_test.py" />
+        <option value="$PROJECT_DIR$/weibo_bert_main.py" />
+        <option value="&lt;5816e439-2036-4ae3-be6e-5d44f79f0c16&gt;/home/yujunshuai/code/Fakeddit-Experiment/test_result.txt" />
+        <option value="$PROJECT_DIR$/weibo_han_bert_main.py" />
+        <option value="$PROJECT_DIR$/prepare_dataset.py" />
+        <option value="$PROJECT_DIR$/data_utils/WeiboGraphDataset.py" />
+        <option value="$PROJECT_DIR$/prepare_tw_dataset.py" />
+        <option value="$PROJECT_DIR$/model/util.py" />
+        <option value="$PROJECT_DIR$/analyse/early_detection.py" />
+        <option value="$PROJECT_DIR$/data_utils/TWGraphDataset.py" />
+        <option value="$PROJECT_DIR$/tw15_han_main.py" />
+        <option value="$PROJECT_DIR$/trainer.py" />
+        <option value="$PROJECT_DIR$/tw16_han_main.py" />
+        <option value="$PROJECT_DIR$/data_utils/TwitterGraphDataset.py" />
+        <option value="$PROJECT_DIR$/data_utils/TW_1516_DynamicGraphDataset.py" />
+        <option value="$PROJECT_DIR$/data_utils/TW_1516_FixedGraphDataset.py" />
+        <option value="$PROJECT_DIR$/data_utils/TWFixedGraphDataset.py" />
+        <option value="$PROJECT_DIR$/data_utils/TW_DynamicGraphDataset.py" />
+        <option value="$PROJECT_DIR$/tw_han_glove_main.py" />
+        <option value="$PROJECT_DIR$/tw_han_main.py" />
+        <option value="$PROJECT_DIR$/data_utils/TWDynamicGraphDataset.py" />
+        <option value="$PROJECT_DIR$/weibo_han_main.py" />
+        <option value="$PROJECT_DIR$/data_utils/FakedditGraphDataset.py" />
+        <option value="$PROJECT_DIR$/analyse/depth_analysis.py" />
+        <option value="$PROJECT_DIR$/analyse/test.py" />
+        <option value="$PROJECT_DIR$/model/HAN.py" />
+        <option value="$PROJECT_DIR$/model/IARNet.py" />
+        <option value="$PROJECT_DIR$/fakeddit_han_main.py" />
+        <option value="$PROJECT_DIR$/fakeddit_iarnet_main.py" />
+        <option value="$PROJECT_DIR$/prepare_wb_dataset.py" />
+        <option value="$PROJECT_DIR$/weibo_bert_avg_main.py" />
+        <option value="$PROJECT_DIR$/weibo_bert_cat_main.py" />
+        <option value="$PROJECT_DIR$/README.md" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="2576" />
+    <option name="height" value="1426" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Fakeddit-Experiment" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Fakeddit-Experiment" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
+    <property name="last_opened_file_path" value="E:/Program Files/Git/bin/git.exe" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Pycharm Workspace\Fakeddit-Experiment\analyse" />
+      <recent name="D:\Pycharm Workspace\Fakeddit-Experiment\data_utils" />
+      <recent name="D:\Pycharm Workspace\Fakeddit-Experiment" />
+      <recent name="D:\Pycharm Workspace\Fakeddit-Experiment\model" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Pycharm Workspace\Fakeddit-Experiment\data_utils\weibo\image" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.depth_analysis">
+    <configuration name="TWDynamicGraphDataset" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Fakeddit-Experiment" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data_utils" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data_utils/TWDynamicGraphDataset.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TWFixedGraphDataset" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Fakeddit-Experiment" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data_utils" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="D:\Pycharm Workspace\Fakeddit-Experiment\data_utils\TW_1516_FixedGraphDataset.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TWFixedGraphDataset" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Fakeddit-Experiment" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data_utils" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data_utils/TWFixedGraphDataset.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="depth_analysis" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Fakeddit-Experiment" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/analyse" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/analyse/depth_analysis.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="fakeddit_han_main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Fakeddit-Experiment" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="false" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="CUDA_VISIBLE_DEVICES" value="4,5" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="D:\Pycharm Workspace\Fakeddit-Experiment\fakeddit_iarnet_main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pure_bert_main" type="PythonConfigurationType" factoryName="Python">
+      <module name="Fakeddit-Experiment" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="CUDA_VISIBLE_DEVICES" value="5" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pure_bert_main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="tw16_han_main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Fakeddit-Experiment" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="CUDA_VISIBLE_DEVICES" value="3,4" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tw16_han_main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.pure_bert_main" />
+      <item itemvalue="Python.tw16_han_main" />
+      <item itemvalue="Python.TWFixedGraphDataset" />
+      <item itemvalue="Python.TWDynamicGraphDataset" />
+      <item itemvalue="Python.fakeddit_han_main" />
+      <item itemvalue="Python.depth_analysis" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.depth_analysis" />
+        <item itemvalue="Python.fakeddit_han_main" />
+        <item itemvalue="Python.TWDynamicGraphDataset" />
+        <item itemvalue="Python.TWFixedGraphDataset" />
+        <item itemvalue="Python.TWFixedGraphDataset" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value=",ALPHA_COMPARATOR" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="193b4ac6-7ab1-436f-9051-aefe621cacf1" name="Default Changelist" comment="" />
+      <created>1575592996183</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1575592996183</updated>
+      <workItem from="1575592999601" duration="10266000" />
+      <workItem from="1575607018238" duration="27871000" />
+      <workItem from="1575775018650" duration="1051000" />
+      <workItem from="1575854102656" duration="3314000" />
+      <workItem from="1575860560143" duration="17718000" />
+      <workItem from="1575939431222" duration="9477000" />
+      <workItem from="1576156145049" duration="31831000" />
+      <workItem from="1576247045474" duration="21575000" />
+      <workItem from="1576408262319" duration="7413000" />
+      <workItem from="1576416080684" duration="4186000" />
+      <workItem from="1576466287802" duration="817000" />
+      <workItem from="1576476511897" duration="28284000" />
+      <workItem from="1576637326451" duration="5017000" />
+      <workItem from="1576719249376" duration="43780000" />
+      <workItem from="1576983191162" duration="88496000" />
+      <workItem from="1577256808165" duration="1348000" />
+      <workItem from="1577258243998" duration="1358000" />
+      <workItem from="1577261022513" duration="53000" />
+      <workItem from="1577271873253" duration="4722000" />
+      <workItem from="1577279184508" duration="2056000" />
+      <workItem from="1577322807337" duration="2882000" />
+      <workItem from="1577692902820" duration="15414000" />
+      <workItem from="1577891978877" duration="18707000" />
+      <workItem from="1578231388830" duration="15539000" />
+      <workItem from="1578483160858" duration="45916000" />
+      <workItem from="1578733285982" duration="43316000" />
+      <workItem from="1579444154070" duration="6690000" />
+      <workItem from="1579582975110" duration="4353000" />
+      <workItem from="1580180966474" duration="1860000" />
+      <workItem from="1580792400031" duration="1726000" />
+      <workItem from="1580883104547" duration="755000" />
+      <workItem from="1582886422366" duration="974000" />
+      <workItem from="1584149698354" duration="741000" />
+      <workItem from="1585999580497" duration="622000" />
+      <workItem from="1586228783230" duration="627000" />
+      <workItem from="1586249204349" duration="2123000" />
+      <workItem from="1589078549347" duration="722000" />
+    </task>
+    <task id="LOCAL-00001" summary="add tensorboard">
+      <created>1576486990150</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1576486990150</updated>
+    </task>
+    <task id="LOCAL-00002" summary="add weibo">
+      <created>1577103638189</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1577103638189</updated>
+    </task>
+    <task id="LOCAL-00003" summary="add weibo">
+      <created>1578571401713</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1578571401713</updated>
+    </task>
+    <task id="LOCAL-00004" summary="impl tw of bert version">
+      <created>1578750923758</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1578750923758</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="473600000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49794802" visible="true" weight="0.21002132" />
+      <window_info id="Favorites" order="1" sideWeight="0.502052" side_tool="true" weight="0.13036565" />
+      <window_info id="Structure" order="2" weight="0.14658849" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3422713" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3160793" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32984513" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" x="348" y="1440" width="1920" height="1050" id="Version Control" order="8" type="FLOATING" weight="0.4164038" />
+      <window_info anchor="bottom" id="File Transfer" order="9" weight="0.32599118" />
+      <window_info anchor="bottom" id="Database Changes" order="10" />
+      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.54735684" />
+      <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="13" weight="0.15969163" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Remote Host" order="3" weight="0.34896663" />
+      <window_info anchor="right" auto_hide="true" x="452" y="1672" width="1133" height="591" id="SciView" order="4" show_stripe_button="false" type="FLOATING" weight="0.29491255" />
+      <window_info anchor="right" id="Database" order="5" weight="0.3298887" />
+    </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49794802" visible="true" weight="0.105325915" />
+      <window_info id="Favorites" order="1" sideWeight="0.502052" side_tool="true" weight="0.13036565" />
+      <window_info id="Structure" order="2" weight="0.14658849" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.34251103" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.30362776" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32984513" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" x="348" y="1440" width="1920" height="1050" id="Version Control" order="8" type="FLOATING" weight="0.4164038" />
+      <window_info anchor="bottom" id="File Transfer" order="9" weight="0.32649842" />
+      <window_info anchor="bottom" id="Database Changes" order="10" />
+      <window_info anchor="bottom" id="Terminal" order="11" weight="0.2626183" />
+      <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="13" visible="true" weight="0.32334384" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Remote Host" order="3" weight="0.34896663" />
+      <window_info anchor="right" auto_hide="true" x="452" y="1672" width="1133" height="591" id="SciView" order="4" show_stripe_button="false" type="FLOATING" weight="0.29491255" />
+      <window_info anchor="right" id="Database" order="5" weight="0.3298887" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add tensorboard" />
+    <MESSAGE value="add weibo" />
+    <MESSAGE value="impl tw of bert version" />
+    <option name="LAST_COMMIT_MESSAGE" value="impl tw of bert version" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/example/run_glue.py</url>
+          <line>284</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/-491476224/1833504969/torchvision/models/resnet.py</url>
+          <line>191</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/analyse/depth_analysis.py</url>
+          <line>60</line>
+          <option name="timeStamp" value="305" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="evaluateCodeFragment">
+      <expression>
+        <expression-string>self.bert(input_ids=node_feature[0].unsqueeze(0),attention_mask=node_feature[1].unsqueeze(0))[0]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>node_feature[0].shape</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>current_node_group = list(comment_tree.values())</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>comment = comment['user']</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>os.path.exists(os.path.join(self.root, f'message/{child_tw_id}.json'))</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>root_node_features = self.convert_sentence_to_features(source_content.readline().split('\t')[-1],
+                                                                                           self.data_max_sequence_length)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>source_content.readline().split('\t')[-1]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>source_content.readline()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>os.path.join(self.root, f'message/{child_tw_id}.json')</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+    </expressions>
+    <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>time.mktime(time.strptime(tw['created_at'], '%a %b %d %H:%M:%S %z %Y'))</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>file_list = pd.DataFrame(file_list).take(sample(range(0, len(file_list)), 300))[0].values.tolist()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>pd.DataFrame(file_list).take(sample(range(0, len(file_list)), 100))[0].values.tolist()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>pd.DataFrame(file_list).take(sample(range(0, len(file_list)), 1000))[0].values.tolist()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>pd.DataFrame(file_list).take(random.sample(range(0, len(file_list)), 1000))[0].values.tolist()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>os.path.join(self.root, f'message/{sample_file}.json')</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>comments_files = sample.split(' ')[1:]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>sample_file = sample.split(' ')[0].split('\t')[-1]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>sample.split(' ')</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>comments_files[5]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/-491476224/1833504969/pandas/core/groupby/groupby.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="880" column="56" lean-forward="true" selection-start-line="880" selection-start-column="56" selection-end-line="880" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/-491476224/1833504969/torch_geometric/data/in_memory_dataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="759">
+          <caret line="70" selection-start-line="70" selection-end-line="70" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/-491476224/230906021/codecs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="249">
+          <caret line="308" selection-start-line="308" selection-end-line="308" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tw16_han_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="837">
+          <caret line="72" column="86" selection-start-line="72" selection-start-column="86" selection-end-line="72" selection-end-column="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/TwitterGraphDataset.py" />
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/-491476224/1833504969/preprocessor/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/TW_1516_FixedGraphDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="757">
+          <caret line="105" column="13" lean-forward="true" selection-start-line="105" selection-start-column="13" selection-end-line="105" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#4595#6379#0" />
+            <element signature="e#6434#10080#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tw16_han_glove_main.py" />
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/-491476224/230906021/random.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tw_han_glove_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="718">
+          <caret line="67" column="41" selection-start-line="67" selection-start-column="41" selection-end-line="67" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tw_han_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="268">
+          <caret line="40" column="77" selection-start-line="40" selection-start-column="77" selection-end-line="40" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/TWDynamicGraphDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="744">
+          <caret line="321" selection-start-line="321" selection-end-line="321" />
+          <folding>
+            <element signature="e#3123#4105#0" />
+            <element signature="e#4182#4508#0" />
+            <element signature="e#4563#8199#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/-491476224/1833504969/transformers/modeling_bert.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="582" column="27" selection-start-line="582" selection-start-column="10" selection-end-line="582" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/TWFixedGraphDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3325">
+          <caret line="197" column="37" selection-start-line="197" selection-start-column="27" selection-end-line="197" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#3208#6855#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/python_stubs/1967138948/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="4170" column="8" selection-start-line="4170" selection-start-column="8" selection-end-line="4170" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/analyse/depth_analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1500">
+          <caret line="60" selection-start-line="60" selection-end-line="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/analyse/get_error_eample.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/analyse/test.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/weibo/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/FakedditDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="82" column="34" lean-forward="true" selection-start-line="82" selection-start-column="34" selection-end-line="82" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/FakedditDatasetWithComment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2190">
+          <caret line="15" column="34" lean-forward="true" selection-start-line="15" selection-start-column="34" selection-end-line="15" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/FakedditGraphDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="21" column="37" selection-start-line="21" selection-start-column="37" selection-end-line="21" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/TW_1516_DynamicGraphDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/MultiModalDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="114" column="63" selection-start-line="114" selection-start-column="54" selection-end-line="114" selection-end-column="63" />
+          <folding>
+            <element signature="e#0#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/WeiboMultiModalDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1950" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/GAT_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/GEAR.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/WeiboGraphDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="403">
+          <caret line="427" lean-forward="true" selection-start-line="427" selection-end-line="427" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#399#875#0" />
+            <element signature="e#6986#9126#0" />
+            <element signature="e#9181#10580#0" />
+            <element signature="e#10630#10875#0" />
+            <element signature="e#10925#11690#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/MulimodalBert.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1950">
+          <caret line="15" column="19" selection-start-line="15" selection-start-column="6" selection-end-line="15" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/IARNet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="404">
+          <caret line="43" column="32" lean-forward="true" selection-start-line="43" selection-start-column="32" selection-end-line="43" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#271#661#0" />
+            <element signature="e#2271#6757#0" />
+            <element signature="e#6814#13231#0" />
+            <element signature="e#13289#16397#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/MultiModalHAN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="17" column="42" selection-start-line="17" selection-start-column="32" selection-end-line="17" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/analyse/early_detection.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="535">
+          <caret line="30" column="24" selection-start-line="30" selection-start-column="24" selection-end-line="30" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/MVAE.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_utils/weibo/data_processing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="8" column="22" selection-start-line="8" selection-start-column="22" selection-end-line="8" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/PureVgg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="50">
+          <caret line="7" selection-end-line="42" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/PureBert.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="9" column="26" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/util.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-490">
+          <caret line="18" column="8" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gear_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="63" column="16" selection-start-line="63" selection-start-column="12" selection-end-line="63" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gear_simple_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mbert_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/prepare_tw_dataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5465">
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fakeddit_iarnet_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="485">
+          <caret line="119" lean-forward="true" selection-start-line="119" selection-end-line="119" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/prepare_wb_dataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="550">
+          <caret line="277" column="46" lean-forward="true" selection-start-line="277" selection-start-column="46" selection-end-line="277" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pure_bert_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1690">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tw15_han_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="298" column="12" selection-start-line="298" selection-start-column="12" selection-end-line="300" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pure_bert_with_comment_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/weibo_bert_avg_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="11" column="17" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/weibo_iarnet_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1090">
+          <caret line="276" column="26" selection-start-line="276" selection-start-column="26" selection-end-line="276" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/weibo_bert_cat_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="11" column="17" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trainer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="89" column="74" lean-forward="true" selection-start-line="89" selection-start-column="74" selection-end-line="89" selection-end-column="74" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor>
+            <caret column="2" lean-forward="true" selection-start-column="2" selection-end-column="2" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

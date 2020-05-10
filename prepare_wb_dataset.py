@@ -10,7 +10,7 @@ from transformers import AdamW, BertTokenizer
 from data_utils.FakedditGraphDataset import FakedditGraphDataset
 from data_utils.WeiboGraphDataset import WeiboGraphDataset
 from model.util import load_parallel_save_model
-from model.HAN import HANForWeiboClassification
+from model.IARNet import IARNetForWeiboClassification
 from trainer import Train
 
 # log format
